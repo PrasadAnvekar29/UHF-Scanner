@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rec_line"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/ll_label_inventory"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/normal_tv_first"
+                android:layout_centerInParent="true"
+                android:text="@string/label_inventory" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_parameter_set"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/normal_tv_first"
+                android:layout_centerInParent="true"
+                android:text="@string/parameter_settings" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_epc_write_read"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/normal_tv_first"
+                android:layout_centerInParent="true"
+                android:text="@string/read_and_write_tags" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_main"
+            android:padding="15dp"
+            android:visibility="gone">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/normal_tv_first"
+                android:layout_centerInParent="true"
+                android:text="@string/uf3_s"
+                android:textColor="@color/red"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_version"
+                style="@style/normal_tv_first"
+                android:layout_centerInParent="true"
+                android:text="" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_uk_new_n1"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        />
+
+    <FrameLayout
+
+        android:id="@+id/rl_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+</LinearLayout>

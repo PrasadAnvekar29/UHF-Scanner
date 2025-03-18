@@ -1,0 +1,55 @@
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/E/R102S/seuic_apk/APK/UHF_AndroidReader/app/src/main/res/layout/activity_main.xml" value="0.36614583333333334" />
+        <entry key="..\:/E/R102S/seuic_apk/APK/UHF_AndroidReader/app/src/main/res/layout/fragment_label_inventory.xml" value="0.36614583333333334" />
+        <entry key="..\:/E/R102S/seuic_apk/APK/UHF_AndroidReader/app/src/main/res/layout/fragment_parameter_setting.xml" value="0.2223731884057971" />
+        <entry key="..\:/E/R102S/seuic_apk/APK/UHF_AndroidReader/app/src/main/res/layout/fragment_read_and_write.xml" value="0.2223731884057971" />
+        <entry key="..\:/E/R102S/seuic_apk/APK/UHF_AndroidReader/app/src/main/res/layout/my_simple_spinner_dropdown_item.xml" value="0.3536458333333333" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/AndroidReader/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1546875" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/ic_launcher_background.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/rec_line.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/rec_line_select.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/rectangle_line.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/rectangle_line_second.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/rectangle_line_top_nopressed.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/drawable/selector_main.xml" value="0.36822916666666666" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/activity_main.xml" value="0.17864583333333334" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/fragment_label_inventory.xml" value="0.67" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/fragment_parameter_setting.xml" value="0.33" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/fragment_read_and_write.xml" value="0.33" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/layout_tag.xml" value="0.33" />
+        <entry key="..\:/Gitee/UHF_AndroidReader/app/src/main/res/layout/my_simple_spinner_dropdown_item.xml" value="0.17864583333333334" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.334" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/drawable/rec_line.xml" value="0.1984375" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/drawable/rec_line_select.xml" value="0.1984375" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/drawable/rectangle_line.xml" value="0.1984375" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/drawable/selector_main.xml" value="0.1984375" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/activity_main.xml" value="0.29483695652173914" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/activity_splash.xml" value="0.3296875" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/fragment_label_inventory.xml" value="0.302536231884058" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/fragment_parameter_setting.xml" value="0.3233695652173913" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/fragment_read_and_write.xml" value="0.33" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/layout_tag.xml" value="0.5" />
+        <entry key="..\:/SeuicCode/Developing/UHF_AndroidReader/app/src/main/res/layout/my_simple_spinner_dropdown_item.xml" value="0.3296875" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/AndroidReader/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/AndroidReader/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/AndroidReader/src/main/res/layout/activity_main.xml" value="0.16" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/AndroidReader/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1015625" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/android_studio/workspace/rfid_-andoird/testDemo/src/main/res/drawable/ic_launcher_background.xml" value="0.18333333333333332" />
+        <entry key="..\:/company/UHF_AndroidReader/app/src/main/res/layout/activity_main.xml" value="0.16777777777777778" />
+        <entry key="..\:/company/UHF_AndroidReader/app/src/main/res/layout/fragment_label_inventory.xml" value="0.1" />
+        <entry key="..\:/company/UHF_AndroidReader/app/src/main/res/layout/fragment_parameter_setting.xml" value="0.25" />
+        <entry key="..\:/company/UHF_AndroidReader/app/src/main/res/layout/fragment_read_and_write.xml" value="0.16777777777777778" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

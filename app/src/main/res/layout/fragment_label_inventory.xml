@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+
+                android:id="@+id/btn_single_card"
+                android:text="@string/single_card"
+                style="@style/btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                />
+            <Button
+
+                android:id="@+id/btn_search_for_card"
+                android:text="@string/search_for_card"
+                style="@style/btn_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_stop_search_for_card"
+                style="@style/btn_style"
+                android:text="@string/stop_search_for_card"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"/>
+            <Button
+
+                android:id="@+id/btn_clear"
+                android:text="@string/clear"
+                style="@style/btn_style"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/rectangle_line"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/tag_number"
+                style="@style/normal_tv_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_tag_number"
+                android:text="0"
+                style="@style/normal_tv_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                style="@style/normal_tv_first"
+                android:text="@string/recognize_times"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_recognize_times"
+                android:text="0"
+                style="@style/normal_tv_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+
+                style="@style/normal_tv_first"
+                android:text="@string/inventory_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tv_inventory_time"
+                style="@style/normal_tv_first"
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:background="@drawable/rectangle_line"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_marginLeft="@dimen/dp_4"
+            android:layout_marginRight="@dimen/dp_4"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="@string/serial_number"
+                android:padding="@dimen/dp_10"
+                style="@style/normal_tv_second"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/normal_tv_second"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="@dimen/dp_10"
+                android:text="@string/epc" />
+            <TextView
+                style="@style/normal_tv_second"
+                android:layout_weight="1"
+                android:padding="@dimen/dp_10"
+                android:text="@string/times"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                style="@style/normal_tv_second"
+                android:layout_weight="1"
+                android:padding="@dimen/dp_10"
+                android:text="@string/rssi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                style="@style/normal_tv_second"
+                android:layout_weight="1"
+                android:padding="@dimen/dp_10"
+                android:text="@string/reader_antenna"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/normal_tv_second"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="@dimen/dp_10"
+                android:text="@string/additional_data" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rlv_epc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" />
+    </LinearLayout>
+
+</LinearLayout>
