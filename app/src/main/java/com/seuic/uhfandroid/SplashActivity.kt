@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -27,13 +28,28 @@ class SplashActivity : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView( R.layout.activity_splash)
 
-        lifecycleScope.launch {
-            delay(DELAY)
-            openTourScreen()
-        }
+
+
+        handler3.post(runnable3)
 
     }
 
+    private var handler3 = Handler()
+    private var runnable3: Runnable = object : Runnable {
+        override fun run() {
+            // Call your API here
+            openTourScreen()
+
+            // Schedule the runnable to run again after 10 seconds
+            handler3.postDelayed(this, 2000)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler3.removeCallbacks(runnable3)
+
+    }
 
 
     private fun openTourScreen() {

@@ -2,7 +2,11 @@ package com.seuic.uhfandroid.base
 
 import android.Manifest
 import android.app.ProgressDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
+
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,7 +47,9 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         initVM()
         initClick()
         requestPermissions()
-
+        if (!Settings.canDrawOverlays(getApplicationContext())) {
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,  Uri.parse("package:" + getPackageName())));
+        }
     }
 
     fun resetViewBinding(VB: ViewBinding) {
