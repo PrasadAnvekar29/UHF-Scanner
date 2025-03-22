@@ -8,6 +8,9 @@ import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.functions.Function;
@@ -560,5 +563,12 @@ public class DataStoreUtils {
             }
         });
         return example;
+    }
+
+    public static Gson getGson() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.serializeNulls();
+        Gson gson = builder.create();
+        return gson;
     }
 }

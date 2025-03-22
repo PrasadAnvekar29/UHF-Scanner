@@ -496,4 +496,7 @@ class FragmentParameterSetting :
         // 显示
         builder.show()
     }
+
+    override fun initStartSendingAPI() {
+    }
 }

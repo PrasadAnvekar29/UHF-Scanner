@@ -37,6 +37,7 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> : Fragment() {
         initData()
         initVM()
         initClick()
+        initStartSendingAPI()
         return v.root
     }
 
@@ -47,4 +48,6 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> : Fragment() {
     abstract fun initData()
 
     abstract fun initVM()
+
+    abstract fun initStartSendingAPI()
 }

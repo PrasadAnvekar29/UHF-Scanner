@@ -334,4 +334,8 @@ class FragmentReadAndWrite :
         }
         spinner.adapter = dropDownAdapter
     }
+
+
+    override fun initStartSendingAPI() {
+    }
 }
