@@ -474,9 +474,6 @@ class FragmentParameterSetting :
         }
     }
 
-    override fun initStartSendingAPI() {
-    }
-
     private fun setDefaultSpData(spinner: Spinner, data: ArrayList<String>) {
         val dropDownAdapter = activity?.let {
             ArrayAdapter(

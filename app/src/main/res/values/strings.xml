@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UK Corp</string>
+    <string name="app_name">VRDDHII</string>
     <string name="label_inventory">Tag Inventory</string>
     <string name="parameter_settings">Parameter Settings</string>
     <string name="read_and_write_tags">Tag Read AND Write</string>
@@ -121,11 +121,11 @@
     <string name="please_fill_additional_data_length">" Please fill in the length of the additional data area"</string>
     <string name="please_stop_searching">Please stop looking for cards</string>
 
-    <string name="auto" >Auto</string>
-    <string name="press_back_again" >Press back again to exit</string>
-
     <string name="default_etStartAddress" translatable="false">0</string>
     <string name="default_etLength" translatable="false">12</string>
     <string name="default_etVisitPassword" translatable="false">00000000</string>
+
+    <string name="auto" >Auto</string>
+    <string name="press_back_again" >Press back again to exit</string>
 
 </resources>

@@ -11,11 +11,11 @@ android {
     ndkVersion "23.0.7599858"
 
     defaultConfig {
-        applicationId "com.seuic.uhfandroidXXX"
+        applicationId "com.ukcorp.vrddhii"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 15
-        versionName "1.7.7"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

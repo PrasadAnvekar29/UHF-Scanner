@@ -2,7 +2,6 @@ package com.seuic.uhfandroid
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Intent
@@ -43,13 +42,6 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     private val fragmentReadAndWrite by lazy { FragmentReadAndWrite() }
     private val TAG = MainActivity::class.simpleName
 
-    fun launch(activity: Activity) {
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-        activity.startActivity(intent)
-    }
-
     private fun showFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val beginTransaction = fragmentManager.beginTransaction()
@@ -83,8 +75,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         lifecycleScope.launchWhenResumed {
             showFragment(fragmentWriteReadDeviceConnect)
         }
-        val versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName
-        v.tvVersion.text=versionName
+        
     }
 
     override fun initClick() {
@@ -198,6 +189,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     }
 
     override fun initVM() {
+
     }
 
     fun showDialogTip(msg: String) {

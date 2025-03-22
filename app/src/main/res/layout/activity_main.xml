@@ -16,8 +16,7 @@
             android:id="@+id/ll_label_inventory"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="15dp"
-            android:visibility="gone">
+            android:padding="15dp">
 
             <TextView
                 style="@style/normal_tv_first"
@@ -30,8 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selector_main"
-            android:padding="15dp"
-            android:visibility="gone">
+            android:padding="15dp">
 
             <TextView
                 style="@style/normal_tv_first"
@@ -44,8 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selector_main"
-            android:padding="15dp"
-            android:visibility="gone">
+            android:padding="15dp">
 
             <TextView
                 style="@style/normal_tv_first"
@@ -58,56 +55,13 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/selector_main"
-            android:padding="15dp"
-            android:visibility="gone">
+            android:padding="15dp">
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selector_main"
-            android:padding="15dp"
-            android:visibility="gone">
-
-            <TextView
-                style="@style/normal_tv_first"
-                android:layout_centerInParent="true"
-                android:text="@string/uf3_s"
-                android:textColor="@color/red"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/selector_main"
-            android:padding="15dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_version"
-                style="@style/normal_tv_first"
-                android:layout_centerInParent="true"
-                android:text="" />
-        </RelativeLayout>
 
 
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo_uk_new_n1"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        />
 
     <FrameLayout
 

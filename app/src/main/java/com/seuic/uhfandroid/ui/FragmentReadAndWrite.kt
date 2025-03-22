@@ -312,9 +312,6 @@ class FragmentReadAndWrite :
         }
     }
 
-    override fun initStartSendingAPI() {
-    }
-
     private fun showDialogTip(msg: String) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(msg)
