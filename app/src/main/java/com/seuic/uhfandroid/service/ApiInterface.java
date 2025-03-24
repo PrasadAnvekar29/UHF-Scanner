@@ -9,8 +9,9 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    @POST("api/inventory/read")
-    Call<APIResponse> postData(@Body RequestBody data);
+    @POST("api/inventory/dummyread")
+ //   @POST("api/inventory/dummyread")
+    Call<APIResponse.Response> postData(@Body RequestBody data);
 
 
 

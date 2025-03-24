@@ -19,7 +19,7 @@
             android:padding="15dp">
 
             <TextView
-                style="@style/normal_tv_first"
+                style="@style/normal_btn"
                 android:layout_centerInParent="true"
                 android:text="@string/label_inventory" />
         </RelativeLayout>
@@ -32,7 +32,7 @@
             android:padding="15dp">
 
             <TextView
-                style="@style/normal_tv_first"
+                style="@style/normal_btn"
                 android:layout_centerInParent="true"
                 android:text="@string/parameter_settings" />
         </RelativeLayout>
@@ -45,20 +45,10 @@
             android:padding="15dp">
 
             <TextView
-                style="@style/normal_tv_first"
+                style="@style/normal_btn"
                 android:layout_centerInParent="true"
                 android:text="@string/read_and_write_tags" />
         </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_main"
-            android:padding="15dp">
-
-        </RelativeLayout>
-
 
 
     </LinearLayout>

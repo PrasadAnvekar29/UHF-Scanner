@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.seuic.uhfandroid.R
+import com.seuic.uhfandroid.database.UFHDatabase
 import java.lang.reflect.ParameterizedType
 
 
@@ -43,6 +44,10 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         v = method.invoke(null, layoutInflater) as VB
         setContentView(v.root)
         mContext = this
+
+        UFHDatabase.getDatabase(this)
+
+
         initView()
         initData()
         initVM()

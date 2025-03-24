@@ -21,6 +21,16 @@
         <item name="android:windowBackground">@drawable/vrddhii</item>
     </style>
 
+
+    <style name="normal_btn">
+        <item name="android:textColor">@color/shiny_black</item>
+        <item name="android:textSize">@dimen/btnTextSize</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
     <style name="normal_tv_first">
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:textColor">@color/shiny_black</item>

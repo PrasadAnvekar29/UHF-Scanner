@@ -11,6 +11,8 @@ import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.adapter.TagInfoAdapter
 import com.seuic.uhfandroid.base.BaseFragment
 import com.seuic.uhfandroid.bean.TagBean
+import com.seuic.uhfandroid.database.TagDataEntry
+import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.databinding.FragmentLabelInventoryBinding
 import com.seuic.uhfandroid.ext.clearTagList
 import com.seuic.uhfandroid.ext.currentTag
@@ -38,19 +40,24 @@ import javax.net.ssl.SSLHandshakeException
 
 
 class FragmentLabelInventory :
-    BaseFragment<ViewModelLabelInventory, FragmentLabelInventoryBinding>(),
-    Callback<APIResponse>
+    BaseFragment<ViewModelLabelInventory, FragmentLabelInventoryBinding>()
 
 
 
 {
 
 
+    private var mDataBase : UFHDatabase? = null
+
+
     private var handler3 = Handler()
     private var runnable3: Runnable = object : Runnable {
         override fun run() {
+
+
+
             // Call your API here
-            //    callNetworkAPI()
+             callNetworkAPI()
 
             // Schedule the runnable to run again after 10 seconds
             handler3.postDelayed(this, 10000)
@@ -169,7 +176,7 @@ class FragmentLabelInventory :
                 v.btnSingleCard.isClickable = it
             }
 
-            // 单次寻卡的livedata监听
+            // Single card search livedata
             vm.tagData.observe(this) {
                 // 清空list，加入单次寻卡结果
                 vm.listTagData.clear()
@@ -180,15 +187,16 @@ class FragmentLabelInventory :
                 v.tvRecognizeTimes.text = "1"
             }
 
-            // 连续寻卡的livedata监听
+            // Continuous card search livedata
             vm.tagListData.observe(this) {
                 adapter.setList(it)
                 adapter.notifyDataSetChanged()
                 v.tvTagNumber.text = it.size.toString()
                 v.tvRecognizeTimes.text = totalCounts.get().toString()
+
             }
 
-            // 清除标签列表的livedata监听
+            // Clear the tag list livedata
             clearTagList.observe(this) {
                 if (it) {
                     vm.listTagData.clear()
@@ -197,7 +205,7 @@ class FragmentLabelInventory :
                 }
             }
 
-            // 重置当前选中标签和标签列表的下标
+            // Reset the index of the currently selected tag and tag list
             resetCurrentTag.observe(this) {
                 if (it) {
                     currentTag = ""
@@ -245,85 +253,129 @@ class FragmentLabelInventory :
     }
 
 
-    private fun callNetworkAPI() {
+    fun callNetworkAPI() {
 
-        /*if(mDataBase == null){
+        if(mDataBase == null){
             mDataBase = UFHDatabase.getDatabase(requireContext())
         }
 
 
 
-     //   var listNeedtoUpload : List<TagDataEntry>  = mDataBase?.tagDataDao()!!.getList()*/
+        CoroutineScope(IO).launch {
+
+            addToDatabase(vm.listTagData)
+
+
+            var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
+
+        //    listNeedtoUpload.addAll(vm.listTagData!!)
+
+
+       //     if(vm.listTagData.size > 0){
+              if(listNeedtoUpload!!.isNotEmpty()){
+                val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
+
+
+                val apiService: ApiInterface = ApiClient.getClient()
+                    .create(ApiInterface::class.java)
+                val call: Call<APIResponse.Response> = apiService.postData(body)
+                call.enqueue(object : Callback<APIResponse.Response?> {
+                    override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
+                        try {
+                            Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
+                            if(response.body() != null  && response.body()!!.isSuccess){
+
+                                if(response.body()!!.data != null ){
+                                    Toast.makeText(requireContext(), ""+response.body()?.data!!.size, Toast.LENGTH_SHORT).show()
+
+                                }
+
+                                /*if(!response.body()!!.data.isNullOrEmpty()){
+                                    removerFromDatabase(response.body()!!.data!!)
+                                }*/
+
+                               /* vm.listTagData.clear()
+                                adapter.data.clear()
+                                adapter.notifyDataSetChanged()*/
+                            }
+                        } catch (e: Exception) {
+                        }
+                    }
+
+                    override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
+                        try {
+                            if (t is SSLHandshakeException) {
+                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
+                            } else if (t is UnknownHostException || t is IllegalStateException) {
+                                Toast.makeText(requireContext(),"Please check your internet connection", Toast.LENGTH_SHORT).show()
+                            } else if (t is SocketTimeoutException) {
+                                Toast.makeText(requireContext(), "Request timeout, please try again.", Toast.LENGTH_SHORT).show()
+                                return
+                            } else {
+                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                        }
+                    }
+                })
+
+            }
+        }
+
+
+
+      //  var dataList : List<TagDataEntry>? = mDataBase?.tagDataDao()!!.getList()
+
+      //  listNeedtoUpload.addAll(dataList!!)
+
+      //  var listNeedtoUpload : List<TagDataEntry>?  = mDataBase?.tagDataDao()!!.getList()
         //   var listNeedtoUpload : List<TagBean>  = vm.listTagData
 
+      //  listNeedtoUpload.addAll(list)
 
-        if(vm.listTagData.size > 0){
+      //  if(vm.listTagData.size > 0){
+        /*if(listNeedtoUpload.size > 0){
+            //   if(listNeedtoUpload != null && listNeedtoUpload.isNotEmpty()){
             val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-            val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(vm.listTagData).toString())
+            val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
 
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
             val call: Call<APIResponse> = apiService.postData(body)
             call.enqueue(this)
-        }
 
-    }
+        }*/
 
-    override fun onResponse(call: Call<APIResponse?>?, response: Response<APIResponse?>) {
-
-        Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
-        if(response.body() != null  && response.body()!!.isSuccess){
-            /*if(!response.body()!!.data.isNullOrEmpty()){
-                removerFromDatabase(response.body()!!.data!!)
-            }*/
-
-            vm.listTagData.clear()
-            adapter.data.clear()
-            adapter.notifyDataSetChanged()
-        }
 
 
     }
 
-    override fun onFailure(call: Call<APIResponse?>?, t: Throwable) {
 
-        if (t is SSLHandshakeException) {
-            Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-        } else if (t is UnknownHostException || t is IllegalStateException) {
-            Toast.makeText(requireContext(),"Please check your internet connection", Toast.LENGTH_SHORT).show()
-        } else if (t is SocketTimeoutException) {
-            Toast.makeText(requireContext(), "Request timeout, please try again.", Toast.LENGTH_SHORT).show()
-            return
-        } else {
-            Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-        }
-    }
+    suspend fun addToDatabase(list : MutableList<TagBean>){
 
+        mDataBase?.tagDataDao()!!.insert(map(list))
 
-    fun addToDatabase(list : MutableList<TagBean>){
-        CoroutineScope(IO).launch {
-            //  mDataBase?.tagDataDao()!!.insert(map(list))
-        }
     }
 
     fun removerFromDatabase(list : List<TagBean>){
         CoroutineScope(IO).launch {
             for(i in list){
-                //   mDataBase?.tagDataDao()!!.deleteData(i.epcId, i.rssi, i.times, i.antenna, i.additionalData)
+               //    mDataBase?.tagDataDao()!!.deleteData(i.epcId, i.rssi, i.times, i.antenna, i.additionalData)
             }
         }
     }
 
 
-    /*fun map(list : List<TagBean>) : List<TagDataEntry>{
+    fun map(list : MutableList<TagBean>) : List<TagDataEntry>{
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.epcId, i.rssi, i.times, i.antenna, i.additionalData))
+            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna))
         }
 
         return tagDataEntry
-    }*/
+    }
 
 }

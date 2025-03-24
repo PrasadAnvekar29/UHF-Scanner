@@ -26,9 +26,9 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit==null) {
             OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
-                    .connectTimeout(9, TimeUnit.SECONDS)
-                    .writeTimeout(9, TimeUnit.SECONDS)
-                    .readTimeout(9, TimeUnit.SECONDS);
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS);
 
             HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
             if (BuildConfig.DEBUG) {
