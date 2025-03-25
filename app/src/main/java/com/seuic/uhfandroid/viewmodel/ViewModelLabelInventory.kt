@@ -35,7 +35,7 @@ class ViewModelLabelInventory : BaseViewModel() {
                     when (workMode) {
                         0 -> Log.i(TAG, "已停止寻卡")
                         1 -> {
-                            // 单次寻卡
+                            // Single card search
                             val tagBean = TagBean(
                                 bean.getEpcStr(),
                                 bean.RSSI,
@@ -43,13 +43,13 @@ class ViewModelLabelInventory : BaseViewModel() {
                                 bean.getAntennaIDStr(),
                                 bean.getEmbeddedStr()
                             )
-                            // 通知标签盘存界面
+                            // Notification label inventory interface
                             tagData.postValue(tagBean)
-                            // 通知标签读写界面
+                            // Notification tag reading and writing interface
                             inventoryDatas.postValue(tagBean)
                         }
                         2 -> {
-                            // 连续寻卡
+                            // Continuous card search
                             val tagBean = TagBean(
                                 bean.getEpcStr(),
                                 bean.RSSI,
@@ -58,12 +58,12 @@ class ViewModelLabelInventory : BaseViewModel() {
                                 bean.getEmbeddedStr()
                             )
 //                        Log.i(TAG, "EPC: " + tagBean.epcId)
-                            // 寻到次数+1
+                            // Number of times found+1
                             Log.i(TAG, "EPC count: " + totalCounts.incrementAndGet().toString())
                             setListData(tagBean)
-                            // 通知标签盘存界面
+                            // Notification label inventory interface
                             tagListData.postValue(listTagData)
-                            // 通知标签读写界面
+                            // Notification tag reading and writing interface
                             inventoryListDatas.postValue(listTagData)
                         }
                     }
@@ -105,7 +105,7 @@ class ViewModelLabelInventory : BaseViewModel() {
         UhfReaderSdk.startBZForSearching()
     }
 
-    // 停止连续寻卡
+    // Stop continuous card search
     fun stopSearchForCard() {
         workMode = 0
         startSearching = false
@@ -116,7 +116,7 @@ class ViewModelLabelInventory : BaseViewModel() {
     private fun setListData(bean: TagBean?) {
         if (bean != null) {
             val judgeExist = judgeExist(bean.epcId)
-            if (judgeExist != -1) {// 重复则加count
+            if (judgeExist != -1) {// Add if repeated count
                 val tagEpc = listTagData[judgeExist]
                 tagEpc.times += 1
                 tagEpc.rssi = bean.rssi
