@@ -270,6 +270,7 @@ class FragmentLabelInventory :
 
     }
 
+
     override fun onResponse(call: Call<APIResponse?>?, response: Response<APIResponse?>) {
 
         Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
