@@ -37,6 +37,10 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLHandshakeException
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.Dispatchers
 
 
 class FragmentLabelInventory :
@@ -149,13 +153,20 @@ class FragmentLabelInventory :
         // 清空
         v.btnClear.setOnClickListener {
             // 总次数置0
-            totalCounts.set(0)
+           /* totalCounts.set(0)
             v.tvTagNumber.text = "0"
             v.tvRecognizeTimes.text = "0"
             v.tvInventoryTime.text = "0"
             // 清空标签盘存和标签读写两个界面的标签列表
             clearTagList.postValue(true)
-            resetCurrentTag.postValue(true)
+            resetCurrentTag.postValue(true)*/
+
+            CoroutineScope(Dispatchers.IO).launch {
+                mDataBase?.tagDataDao()?.deleteAll()
+                mDataBase?.tagDataDao()?.truncateAll()
+            }
+
+
         }
     }
 
@@ -164,7 +175,7 @@ class FragmentLabelInventory :
         v.rlvEpc.layoutManager = LinearLayoutManager(activity)
         Constants.connectState.observe(requireActivity()) {
             if (it.state == Constants.CONNECTED) {
-                vm.registerListener()
+                vm.registerListener(requireContext())
             }
         }
     }
@@ -191,8 +202,8 @@ class FragmentLabelInventory :
             vm.tagListData.observe(this) {
                 adapter.setList(it)
                 adapter.notifyDataSetChanged()
-                v.tvTagNumber.text = it.size.toString()
-                v.tvRecognizeTimes.text = totalCounts.get().toString()
+             //   v.tvTagNumber.text = it.size.toString()
+             //   v.tvRecognizeTimes.text = totalCounts.get().toString()
 
             }
 
@@ -248,8 +259,28 @@ class FragmentLabelInventory :
         Handler(Looper.myLooper()!!).postDelayed({
             handler3.post(runnable3)
             v.btnSearchForCard.performClick()
+
+            if(mDataBase == null){
+                mDataBase = UFHDatabase.getDatabase(requireContext())
+            }
+
+            mDataBase?.tagDataDao()?.getCount()
+            ?.observe(this, Observer { count: List<TagDataEntry> -> this.getCount(count) })
+
+            mDataBase?.tagDataDao()?.getListLiveData()
+                ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
+
+
+         //   addToDatabase(null)
         }, 3000)
 
+    }
+
+    private fun getCount(list: List<TagDataEntry>) {
+        v.tvTagNumber.text = list.size.toString()
+    }
+    private fun getListLiveData(listData: MutableList<TagDataEntry>) {
+        vm.tagListData.postValue(listData)
     }
 
 
@@ -263,18 +294,18 @@ class FragmentLabelInventory :
 
         CoroutineScope(IO).launch {
 
-            addToDatabase(vm.listTagData)
+       //     addToDatabase(vm.listTagData)
 
 
-            var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
+        //    var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()?.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
 
 
-       //     if(vm.listTagData.size > 0){
-              if(listNeedtoUpload!!.isNotEmpty()){
+            if(vm.listTagData.size > 0){
+         //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
+                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(vm.listTagData).toString())
 
 
                 val apiService: ApiInterface = ApiClient.getClient()
@@ -353,9 +384,17 @@ class FragmentLabelInventory :
     }
 
 
-    suspend fun addToDatabase(list : MutableList<TagBean>){
+     fun addToDatabase(list : MutableList<TagBean>?){
 
-        mDataBase?.tagDataDao()!!.insert(map(list))
+    //    mDataBase?.tagDataDao()?.insert(map(list))
+
+        CoroutineScope(IO).launch {
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1"))
+        }
 
     }
 

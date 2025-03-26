@@ -6,11 +6,12 @@ import com.seuic.androidreader.sdk.ReaderErrorCode
 import com.seuic.androidreader.sdk.UhfReaderSdk
 import com.seuic.uhfandroid.base.BaseViewModel
 import com.seuic.uhfandroid.bean.TagBean
+import com.seuic.uhfandroid.database.TagDataEntry
 import com.seuic.uhfandroid.util.BaseUtil
 
 class ViewModelReadAndWrite : BaseViewModel() {
     private val TAG = ViewModelReadAndWrite::class.simpleName
-    var listTagData = mutableListOf<TagBean>()
+    var listTagData = mutableListOf<TagDataEntry>()
     var tagDetailData = MutableLiveData<String>()
     var tagResultWrite = MutableLiveData<Int>()
     var tagResultLock = MutableLiveData<Int>()

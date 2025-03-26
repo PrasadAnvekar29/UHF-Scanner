@@ -2,12 +2,13 @@ package com.seuic.uhfandroid.ext
 
 import androidx.lifecycle.MutableLiveData
 import com.seuic.uhfandroid.bean.TagBean
+import com.seuic.uhfandroid.database.TagDataEntry
 import java.util.concurrent.atomic.AtomicInteger
 
 
-var inventoryDatas = MutableLiveData<TagBean>()
+var inventoryDatas = MutableLiveData<TagDataEntry>()
 
-var inventoryListDatas = MutableLiveData<MutableList<TagBean>>()
+var inventoryListDatas = MutableLiveData<MutableList<TagDataEntry>>()
 
 // 当前盘点天线
 var currentAntennaArray = intArrayOf()
