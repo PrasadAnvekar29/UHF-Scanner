@@ -115,7 +115,7 @@ class ViewModelLabelInventory : BaseViewModel() {
 
     private fun setListData(bean: TagBean?) {
         if (bean != null) {
-            val judgeExist = judgeExist(bean.epcId)
+            val judgeExist = judgeExist(bean.epcId, bean.antenna)
             if (judgeExist != -1) {// Add if repeated count
                 val tagEpc = listTagData[judgeExist]
                 tagEpc.times += 1
@@ -129,11 +129,11 @@ class ViewModelLabelInventory : BaseViewModel() {
         }
     }
 
-    private fun judgeExist(id: String): Int {
+    private fun judgeExist(id: String, antenna: String): Int {
         var result = -1
         // TODO: 2022/2/18 java.util.ConcurrentModificationException
         for ((index, bean) in listTagData.withIndex()) {
-            if (bean.epcId == id) {
+            if (bean.epcId == id && bean.antenna == antenna  ) {
                 result = index
             }
         }
