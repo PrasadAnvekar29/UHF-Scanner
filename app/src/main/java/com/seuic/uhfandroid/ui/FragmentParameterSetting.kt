@@ -74,10 +74,9 @@ class FragmentParameterSetting :
             list.add(index.toString())
         }
         setDefaultSpData(v.spOutputPower, list)
-        var workFrequency = resources.getStringArray(R.array.sp_work_frequency_band)
-        if (LanguageUtils.getAppliedLanguage() == Locale.ENGLISH) {
-            workFrequency = resources.getStringArray(R.array.sp_work_frequency_band_English)
-        }
+        v.spOutputPower.setSelection(list.indexOf("20"))
+
+        var workFrequency = resources.getStringArray(R.array.sp_work_frequency_band_English)
         setDefaultSpData(
             v.spWorkFrequencyBand,
             workFrequency.toList() as ArrayList<String>

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sp_work_frequency_band">
-        <item>北美标准(902~928)MHz</item>
-        <item>中国标准1(920~925)MHz</item>
-        <!--item>欧洲标准(865~868)MHz</item-->
-    </string-array>
+
     <string-array name="sp_work_frequency_band_English">
         <item>FCC(902~928)MHz</item>
         <item>China1(920~925)MHz</item>
@@ -12,26 +8,13 @@
     <string-array name="sp_work_agreement">
         <item>ISO18000-6C</item>
     </string-array>
-    <string-array name="sp_suit">
-        <item>是</item>
-        <item>否</item>
-    </string-array>
     <string-array name="sp_suit_English">
         <item>Yes</item>
         <item>No</item>
     </string-array>
-    <string-array name="sp_enable">
-        <item>启用</item>
-        <item>不启用</item>
-    </string-array>
     <string-array name="sp_enable_English">
         <item>Enable</item>
         <item>Disable</item>
-    </string-array>
-    <string-array name="sp_lock_type">
-        <item>解除</item>
-        <item>暂时锁定</item>
-        <item>永久锁定</item>
     </string-array>
     <string-array name="sp_lock_type_English">
         <item>Unlock</item>
@@ -58,10 +41,7 @@
         <item>TID</item>
         <item>USER</item>
     </string-array>
-    <string-array name="sp_buzzer">
-        <item>开</item>
-        <item>关</item>
-    </string-array>
+
     <string-array name="sp_buzzer_English">
         <item>On</item>
         <item>Off</item>
@@ -78,10 +58,7 @@
         <item>OUT4</item>
     </string-array>
 
-    <string-array name="sp_out_dir">
-        <item>低电平</item>
-        <item>高电平</item>
-    </string-array>
+
     <string-array name="sp_out_dir_English">
         <item>Low level</item>
         <item>High Level</item>

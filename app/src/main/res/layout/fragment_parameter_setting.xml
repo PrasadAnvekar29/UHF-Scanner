@@ -295,7 +295,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:entries="@array/sp_out_dir" />
+                        android:entries="@array/sp_out_dir_English" />
 
                 </LinearLayout>
 
@@ -633,7 +633,7 @@
                         style="@style/sp_style"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:entries="@array/sp_buzzer" />
+                        android:entries="@array/sp_buzzer_English" />
                 </LinearLayout>
 
             </RelativeLayout>

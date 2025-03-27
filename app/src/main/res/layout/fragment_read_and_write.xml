@@ -226,7 +226,7 @@
                         android:id="@+id/sp_suit"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:entries="@array/sp_suit"
+                        android:entries="@array/sp_suit_English"
                         android:minWidth="100dp"
                         android:padding="@dimen/dp_10"
                         android:textSize="16sp" />
@@ -258,7 +258,7 @@
                         android:id="@+id/sp_enable"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:entries="@array/sp_enable"
+                        android:entries="@array/sp_enable_English"
                         android:minWidth="100dp"
                         android:padding="@dimen/dp_10"
                         android:textSize="16sp" />
@@ -495,7 +495,7 @@
                             android:layout_width="wrap_content"
 
                             android:layout_height="match_parent"
-                            android:entries="@array/sp_lock_type"
+                            android:entries="@array/sp_lock_type_English"
                             android:padding="@dimen/dp_10" />
                     </LinearLayout>
                 </RelativeLayout>
