@@ -78,16 +78,8 @@ class FragmentLabelInventory :
 
             val hms = java.lang.String.format(
                 "%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentTime),
-                TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(
-                    TimeUnit.MILLISECONDS.toHours(
-                        currentTime
-                    )
-                ),
-                TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(
-                    TimeUnit.MILLISECONDS.toMinutes(
-                        currentTime
-                    )
-                )
+                TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(currentTime)),
+                TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime))
             )
             //   println(hms)
 
@@ -268,7 +260,7 @@ class FragmentLabelInventory :
             ?.observe(this, Observer { count: List<TagDataEntry> -> this.getCount(count) })
 
             mDataBase?.tagDataDao()?.getListLiveData()
-                ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
+            ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
 
 
          //   addToDatabase(null)
