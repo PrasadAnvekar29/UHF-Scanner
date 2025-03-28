@@ -286,10 +286,10 @@ class FragmentLabelInventory :
 
         CoroutineScope(IO).launch {
 
-       //     addToDatabase(vm.listTagData)
+         //   addToDatabase(vm.listTagData)
 
 
-        //    var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()?.getList()
+       //     var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
 
@@ -310,7 +310,12 @@ class FragmentLabelInventory :
                             if(response.body() != null  && response.body()!!.isSuccess){
 
                                 if(response.body()!!.data != null ){
-                                    Toast.makeText(requireContext(), ""+response.body()?.data!!.size, Toast.LENGTH_SHORT).show()
+                                    vm.listTagData.clear()
+                                    adapter.data.clear()
+                                    adapter.notifyDataSetChanged()
+                                   /* for( tag in response.body()!!.data){
+
+                                    }*/
 
                                 }
 
