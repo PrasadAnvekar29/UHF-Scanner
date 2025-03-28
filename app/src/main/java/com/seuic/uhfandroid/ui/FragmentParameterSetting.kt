@@ -266,7 +266,7 @@ class FragmentParameterSetting :
                 ) { _, _ ->
                     // 设置功能
                     currentAntennaArray = intArrayOf()
-                    vm.setPower(33)
+                    vm.setPower(20)
                     vm.setRegion("FCC")
                     vm.setSession(0)
                     vm.setProfile(0)
@@ -280,7 +280,7 @@ class FragmentParameterSetting :
                     UhfReaderSdk.setFilter(0, 0, "", isInvert = false, enable = false)
 
                     // 更新界面
-                    v.spOutputPower.setSelection(32)
+                    v.spOutputPower.setSelection(19)
                     v.spWorkFrequencyBand.setSelection(0)
                     v.cbCheckant.isChecked = true
                     v.spSession.setSelection(0)
@@ -300,7 +300,7 @@ class FragmentParameterSetting :
                     v.tvHardwareVersion.text = ""
                     v.spBuzzer.setSelection(0)
                     // 更新sharedPreferences
-                    sp.setPower(33)
+                    sp.setPower(20)
                         .setRegion(0)
                         .setSession(0)
                         .setProfile(0)

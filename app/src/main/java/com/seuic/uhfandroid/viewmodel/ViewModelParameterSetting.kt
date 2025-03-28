@@ -89,7 +89,13 @@ class ViewModelParameterSetting : BaseViewModel() {
                                 + " readPower:" + it.readPower.toString()
                                 + " writePower:" + it.writePower.toString()
                     )
-                    power.postValue(it.readPower.toInt())
+
+                    if(it.readPower.toInt() < 20){
+                        power.postValue(it.readPower.toInt())
+                    } else {
+                        power.postValue(20)
+                    }
+
                 }
             } else {
                 Log.e(TAG, "getPower: 获取失败")
