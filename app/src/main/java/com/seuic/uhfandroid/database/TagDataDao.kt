@@ -28,10 +28,8 @@ interface TagDataDao {
     suspend fun truncateAll()
 
 
-
-    @Query("DELETE from tag_data_table WHERE epcId = 'epcId' AND  antenna = 'antenna' ")
+    @Query("DELETE from tag_data_table WHERE epcId = :epcId AND  antenna = :antenna ")
     suspend fun deleteData(epcId : String, antenna : String)
-
 
 
     @Query("SELECT * from tag_data_table")

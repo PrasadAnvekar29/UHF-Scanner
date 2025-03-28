@@ -398,7 +398,7 @@ class FragmentLabelInventory :
     fun removerFromDatabase(list : List<APIResponse.Tag>){
         CoroutineScope(IO).launch {
             for(i in list){
-                   mDataBase?.tagDataDao()!!.deleteData(i.epcId, i.antenna)
+                   mDataBase?.tagDataDao()?.deleteData(i.epcId, i.antenna)
             }
         }
     }
