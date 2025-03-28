@@ -310,12 +310,12 @@ class FragmentLabelInventory :
                             if(response.body() != null  && response.body()!!.isSuccess){
 
                                 if(response.body()!!.data != null ){
-                                    vm.listTagData.clear()
-                                    adapter.data.clear()
-                                    adapter.notifyDataSetChanged()
-                                   /* for( tag in response.body()!!.data){
+                                 //   vm.listTagData.clear()
+                                 //   adapter.data.clear()
+                                //    adapter.notifyDataSetChanged()
 
-                                    }*/
+
+                                    removerFromDatabase(response.body()!!.data)
 
                                 }
 
@@ -395,10 +395,10 @@ class FragmentLabelInventory :
 
     }
 
-    fun removerFromDatabase(list : List<TagBean>){
+    fun removerFromDatabase(list : List<APIResponse.Tag>){
         CoroutineScope(IO).launch {
             for(i in list){
-               //    mDataBase?.tagDataDao()!!.deleteData(i.epcId, i.rssi, i.times, i.antenna, i.additionalData)
+                   mDataBase?.tagDataDao()!!.deleteData(i.epcId, i.antenna)
             }
         }
     }
