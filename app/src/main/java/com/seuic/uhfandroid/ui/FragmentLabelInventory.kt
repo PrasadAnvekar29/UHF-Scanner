@@ -52,6 +52,7 @@ class FragmentLabelInventory :
 
 
     private var mDataBase : UFHDatabase? = null
+    private var mDeviceId : String? = null
 
 
     private var handler3 = Handler()
@@ -262,7 +263,7 @@ class FragmentLabelInventory :
             mDataBase?.tagDataDao()?.getListLiveData()
             ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
 
-
+            mDeviceId = DataStoreUtils.getDeviceId(requireContext())
          //   addToDatabase(null)
         }, 3000)
 
@@ -302,7 +303,12 @@ class FragmentLabelInventory :
 
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
-                val call: Call<APIResponse.Response> = apiService.postData(body)
+
+                if(mDeviceId.isNullOrBlank()){
+                    mDeviceId = DataStoreUtils.getDeviceId(requireContext())
+                }
+
+                val call: Call<APIResponse.Response> = apiService.postData(mDeviceId, body)
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {

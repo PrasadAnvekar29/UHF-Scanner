@@ -1,6 +1,8 @@
 package com.seuic.uhfandroid.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.provider.Settings;
 
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
@@ -570,5 +572,17 @@ public class DataStoreUtils {
         builder.serializeNulls();
         Gson gson = builder.create();
         return gson;
+    }
+
+    @SuppressLint("HardwareIds")
+    public static String getDeviceId(Context context) {
+        String macAddress = "";
+
+        try{
+            macAddress = Settings.Secure.getString( context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return macAddress;
     }
 }
