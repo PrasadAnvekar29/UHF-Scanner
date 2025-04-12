@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seuic.androidreader.sdk.Constants
+import com.seuic.uhfandroid.MainActivity
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.adapter.TagInfoAdapter
 import com.seuic.uhfandroid.base.BaseFragment
@@ -19,13 +21,13 @@ import com.seuic.uhfandroid.ext.currentTag
 import com.seuic.uhfandroid.ext.isSearching
 import com.seuic.uhfandroid.ext.itemClickable
 import com.seuic.uhfandroid.ext.resetCurrentTag
-import com.seuic.uhfandroid.ext.totalCounts
 import com.seuic.uhfandroid.service.APIResponse
 import com.seuic.uhfandroid.service.ApiClient
 import com.seuic.uhfandroid.service.ApiInterface
 import com.seuic.uhfandroid.util.DataStoreUtils
 import com.seuic.uhfandroid.viewmodel.ViewModelLabelInventory
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,10 +39,6 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLHandshakeException
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import kotlinx.coroutines.Dispatchers
 
 
 class FragmentLabelInventory :
@@ -52,7 +50,7 @@ class FragmentLabelInventory :
 
 
     private var mDataBase : UFHDatabase? = null
-    private var mDeviceId : String? = null
+    private var mBranchId : String? = null
 
 
     private var handler3 = Handler()
@@ -60,9 +58,16 @@ class FragmentLabelInventory :
         override fun run() {
 
 
+            mBranchId = DataStoreUtils.getBranchId(requireActivity())
 
-            // Call your API here
-             callNetworkAPI()
+            if(!mBranchId.isNullOrBlank()){
+                // Call your API here
+                callNetworkAPI()
+            } else {
+                Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
+            }
+
+
 
             // Schedule the runnable to run again after 10 seconds
             handler3.postDelayed(this, 10000)
@@ -250,8 +255,17 @@ class FragmentLabelInventory :
 
 
         Handler(Looper.myLooper()!!).postDelayed({
+
+            mBranchId = DataStoreUtils.getBranchId(requireContext())
+
+            if(mBranchId.isNullOrEmpty()){
+                (getActivity() as MainActivity).showDialog()
+            } else {
+                v.btnSearchForCard.performClick()
+            }
+
+
             handler3.post(runnable3)
-            v.btnSearchForCard.performClick()
 
             if(mDataBase == null){
                 mDataBase = UFHDatabase.getDatabase(requireContext())
@@ -263,7 +277,7 @@ class FragmentLabelInventory :
             mDataBase?.tagDataDao()?.getListLiveData()
             ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
 
-            mDeviceId = DataStoreUtils.getDeviceId(requireContext())
+
          //   addToDatabase(null)
         }, 3000)
 
@@ -304,11 +318,9 @@ class FragmentLabelInventory :
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-                if(mDeviceId.isNullOrBlank()){
-                    mDeviceId = DataStoreUtils.getDeviceId(requireContext())
-                }
 
-                val call: Call<APIResponse.Response> = apiService.postData(mDeviceId, body)
+
+                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, body)
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {

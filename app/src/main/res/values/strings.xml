@@ -128,4 +128,7 @@
     <string name="auto" >Auto</string>
     <string name="press_back_again" >Press back again to exit</string>
 
+    <string name="yes">Set</string>
+    <string name="no">Cencel</string>
+
 </resources>

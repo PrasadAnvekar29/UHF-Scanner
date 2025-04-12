@@ -4,18 +4,26 @@ import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.database.UFHDatabase
+import com.seuic.uhfandroid.util.DataStoreUtils
 import java.lang.reflect.ParameterizedType
 
 
@@ -112,4 +120,88 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     abstract fun initData()
 
     abstract fun initVM()
+
+
+
+    interface AlertDialogActionListener {
+        fun action(isPositive: Boolean)
+    }
+    private var alertDialogBuilder: AlertDialog.Builder? = null
+
+    protected fun showAlertDialog(alertTitle: String?, alertMessage: String?, positiveButtonTitle: String?,
+                                  negativeButtonTitle: String?,  isCancelable : Boolean?, isEditable : Boolean, actionListener: AlertDialogActionListener?) {
+        try {
+
+            val inflater = getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val promptView: View = inflater.inflate(R.layout.dialog_alert, null)
+            alertDialogBuilder = AlertDialog.Builder(this)
+            val mTitle = promptView.findViewById<View>(R.id.title) as AppCompatTextView
+            val mBranchIdText = promptView.findViewById<View>(R.id.branch_id_text) as AppCompatTextView
+            var mBranchId = promptView.findViewById<View>(R.id.branch_id) as AppCompatEditText
+            val mPositive = promptView.findViewById<View>(R.id.positive) as AppCompatButton
+            val mNegative = promptView.findViewById<View>(R.id.negative) as AppCompatButton
+
+            mTitle.text = alertTitle ?: "Branch Id"
+            mBranchId.setText(alertMessage ?: "Message")
+            mPositive.text = positiveButtonTitle ?: "Ok"
+            mNegative.text = negativeButtonTitle ?: "Cancel"
+
+
+            alertDialogBuilder!!.setView(promptView)
+            val alertDialog = alertDialogBuilder!!.create()
+
+            if (negativeButtonTitle == null) {
+                mNegative.visibility = View.GONE
+            }
+
+
+            if(isEditable ){
+                mBranchId.isEnabled = true
+                mBranchIdText.visibility = View.VISIBLE
+            } else {
+                mBranchId.isEnabled = false
+                mBranchIdText.visibility = View.INVISIBLE
+            }
+
+
+
+
+            mPositive.setOnClickListener(View.OnClickListener {
+
+                if(!mBranchId.text.toString().isNullOrEmpty()){
+                    val branchId = mBranchId.text.toString().trim()
+                    DataStoreUtils.setBranchId(branchId, this)
+                }
+                actionListener?.action(true)
+
+                alertDialog.dismiss()
+            })
+            mNegative.setOnClickListener {
+                actionListener?.action(false)
+                alertDialog.dismiss()
+            }
+
+            if(isCancelable != null){
+                alertDialog.setCanceledOnTouchOutside(isCancelable)
+                alertDialog.setCancelable(isCancelable)
+            } else {
+                alertDialog.setCanceledOnTouchOutside(true)
+                alertDialog.setCancelable(true)
+            }
+
+
+            if(isCancelable != null){
+                alertDialog.setCanceledOnTouchOutside(isCancelable)
+                alertDialog.setCancelable(isCancelable)
+            } else {
+                alertDialog.setCanceledOnTouchOutside(true)
+                alertDialog.setCancelable(true)
+            }
+
+            alertDialog.show()
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        } catch (ignored: Exception) {
+        }
+    }
+
 }

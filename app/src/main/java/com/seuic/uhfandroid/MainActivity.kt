@@ -8,10 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.seuic.androidreader.sdk.Constants
 import com.seuic.androidreader.sdk.ReaderErrorCode
@@ -21,11 +18,10 @@ import com.seuic.uhfandroid.base.BaseViewModel
 import com.seuic.uhfandroid.databinding.ActivityMainBinding
 import com.seuic.uhfandroid.ext.connectResult
 import com.seuic.uhfandroid.ext.isSearching
-import com.seuic.uhfandroid.ext.itemClickable
 import com.seuic.uhfandroid.ui.FragmentLabelInventory
 import com.seuic.uhfandroid.ui.FragmentParameterSetting
 import com.seuic.uhfandroid.ui.FragmentReadAndWrite
-import com.seuic.util.common.LanguageUtils
+import com.seuic.uhfandroid.util.DataStoreUtils
 import com.seuic.util.common.ToastUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -100,6 +96,19 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
             }
         }
 
+
+        v.llBranchId.setOnClickListener {
+            val brachId = DataStoreUtils.getBranchId(this)
+            showAlertDialog(null, brachId, null, null, false, false ,null)
+        }
+
+        v.llSetBranchId.setOnClickListener {
+            showSetBranchIdDialog()
+
+        }
+
+        val brachId = DataStoreUtils.getBranchId(this)
+        v.branchId.text = "Branch Id : " + brachId
     }
 
     private fun reboot() {
@@ -223,4 +232,28 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     override fun onBackPressed() {
         backPressedTime = System.currentTimeMillis()
     }
+
+    fun showSetBranchIdDialog(){
+        val brachId = DataStoreUtils.getBranchId(this)
+
+        showAlertDialog(   null, brachId ,
+            getString(R.string.yes), getString(R.string.no), false, true ,object : AlertDialogActionListener {
+                override fun action(isPositive: Boolean) {
+                    try {
+                        val brachId = DataStoreUtils.getBranchId(this@MainActivity)
+                        v.branchId.text = "Branch Id : " + brachId
+
+                    }catch (e : Exception){
+
+                    }
+
+                }
+            })
+    }
+
+    fun showDialog(){
+        showSetBranchIdDialog()
+    }
+
+
 }

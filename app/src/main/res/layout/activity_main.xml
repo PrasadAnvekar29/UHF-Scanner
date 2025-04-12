@@ -6,17 +6,36 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rec_line"
-        android:orientation="horizontal">
+        android:background="@color/colorPrimaryLight"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/vrddhii_1"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="-50dp"
+        android:orientation="horizontal"
+        android:gravity="right">
 
         <RelativeLayout
             android:id="@+id/ll_label_inventory"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:visibility="invisible">
 
             <TextView
                 style="@style/normal_btn"
@@ -29,7 +48,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selector_main"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:visibility="invisible">
 
             <TextView
                 style="@style/normal_btn"
@@ -42,12 +62,46 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/selector_main"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:visibility="invisible">
 
             <TextView
                 style="@style/normal_btn"
                 android:layout_centerInParent="true"
                 android:text="@string/read_and_write_tags" />
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:id="@+id/ll_branch_id"
+            android:padding="15dp">
+
+            <TextView
+                style="@style/normal_btn"
+                android:layout_centerInParent="true"
+                android:id="@+id/branch_id"
+                android:text="Branch Id" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:id="@+id/ll_set_branch_id"
+            android:padding="15dp">
+
+
+            <TextView
+                style="@style/normal_btn"
+                android:layout_centerInParent="true"
+                android:id="@+id/set_branch_id"
+                android:text="Set Branch Id" />
         </RelativeLayout>
 
 

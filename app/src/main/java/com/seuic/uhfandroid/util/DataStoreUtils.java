@@ -2,7 +2,9 @@ package com.seuic.uhfandroid.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.text.TextUtils;
 
 import androidx.datastore.preferences.core.MutablePreferences;
 import androidx.datastore.preferences.core.Preferences;
@@ -59,6 +61,9 @@ public class DataStoreUtils {
     Preferences.Key<Boolean> gpo4Key = PreferencesKeys.booleanKey("gpo4");
     // 蜂鸣器
     Preferences.Key<Boolean> buzzerKey = PreferencesKeys.booleanKey("buzzer");
+
+
+    public static final String BRANCH_ID = "branch_id";
 
 
     private DataStoreUtils(Context context) {
@@ -574,15 +579,24 @@ public class DataStoreUtils {
         return gson;
     }
 
-    @SuppressLint("HardwareIds")
-    public static String getDeviceId(Context context) {
-        String macAddress = "";
+    private static void setChacheData(Context context, String type, String key, String value){
 
-        try{
-            macAddress = Settings.Secure.getString( context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return macAddress;
+        SharedPreferences sharedPreferences = context.getSharedPreferences(type, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
     }
+    private static String getChacheData(Context context, String type, String key){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(type, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, "");
+    }
+
+    public static void setBranchId(String branchId, Context context) {
+        setChacheData(context, BRANCH_ID, BRANCH_ID, branchId);
+    }
+    public static String getBranchId(Context context) {
+        return TextUtils.isEmpty(getChacheData(context, BRANCH_ID, BRANCH_ID)) ? "" :  getChacheData(context, BRANCH_ID, BRANCH_ID) ;
+    }
+
 }
