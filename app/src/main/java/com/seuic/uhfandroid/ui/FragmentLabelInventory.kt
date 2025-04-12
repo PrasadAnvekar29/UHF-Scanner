@@ -4,6 +4,7 @@ package com.seuic.uhfandroid.ui
 import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seuic.androidreader.sdk.Constants
@@ -290,15 +291,17 @@ class FragmentLabelInventory :
          //   addToDatabase(vm.listTagData)
 
 
-       //     var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
+            var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
 
 
-            if(vm.listTagData.size > 0){
+            Log.v("Prasad", "1")
+            if(!listNeedtoUpload.isNullOrEmpty()){
+                Log.v("Prasad","2")
          //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(vm.listTagData).toString())
+                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
 
                 val apiService: ApiInterface = ApiClient.getClient()
@@ -312,6 +315,7 @@ class FragmentLabelInventory :
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {
+                            Log.v("Prasad","3")
                             Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
                             if(response.body() != null  && response.body()!!.isSuccess){
 
@@ -339,6 +343,7 @@ class FragmentLabelInventory :
 
                     override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
                         try {
+                            Log.v("Prasad","4")
                             if (t is SSLHandshakeException) {
                                 Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
                             } else if (t is UnknownHostException || t is IllegalStateException) {
