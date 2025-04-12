@@ -316,9 +316,9 @@ class FragmentLabelInventory :
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {
                             Log.v("Prasad","3")
-                            Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
-                            if(response.body() != null  && response.body()!!.isSuccess){
 
+                            if(response.body() != null  && response.body()!!.isSuccess){
+                                Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
                                 if(response.body()!!.data != null ){
                                  //   vm.listTagData.clear()
                                  //   adapter.data.clear()
@@ -336,6 +336,8 @@ class FragmentLabelInventory :
                                /* vm.listTagData.clear()
                                 adapter.data.clear()
                                 adapter.notifyDataSetChanged()*/
+                            } else  if(response.code() == 404){
+                                Toast.makeText(requireContext(), "api not found ", Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
                         }
