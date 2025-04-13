@@ -42,6 +42,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.seuic.uhfandroid.MainActivity
+import com.seuic.uhfandroid.service.BaseApiResponse
 import kotlinx.coroutines.Dispatchers
 
 
@@ -337,8 +338,10 @@ class FragmentLabelInventory :
                                /* vm.listTagData.clear()
                                 adapter.data.clear()
                                 adapter.notifyDataSetChanged()*/
-                            } else  if(response.code() == 404){
-                                Toast.makeText(requireContext(), "api not found ", Toast.LENGTH_SHORT).show()
+                            } else {
+                                val b = BaseApiResponse()
+                                val  msg: String = b.safeErrorResponse(response)
+                                Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
                         }
@@ -347,16 +350,11 @@ class FragmentLabelInventory :
                     override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
                         try {
                             Log.v("Prasad","4")
-                            if (t is SSLHandshakeException) {
-                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-                            } else if (t is UnknownHostException || t is IllegalStateException) {
-                                Toast.makeText(requireContext(),"Please check your internet connection", Toast.LENGTH_SHORT).show()
-                            } else if (t is SocketTimeoutException) {
-                                Toast.makeText(requireContext(), "Request timeout, please try again.", Toast.LENGTH_SHORT).show()
-                                return
-                            } else {
-                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-                            }
+
+                            val b = BaseApiResponse()
+                            val  msg: String = b.safeErrorResponse(t)
+                            Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
+
                         } catch (e: Exception) {
                         }
                     }
