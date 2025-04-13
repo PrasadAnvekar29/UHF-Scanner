@@ -51,6 +51,20 @@
         </RelativeLayout>
 
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp">
+
+            <TextView
+                style="@style/normal_btn"
+                android:id="@+id/branch_id"
+                android:layout_centerInParent="true"
+                android:text="@string/read_and_write_tags" />
+        </RelativeLayout>
+
+
     </LinearLayout>
 
     <FrameLayout

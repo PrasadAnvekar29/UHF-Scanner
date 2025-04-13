@@ -41,6 +41,7 @@ import javax.net.ssl.SSLHandshakeException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.seuic.uhfandroid.MainActivity
 import kotlinx.coroutines.Dispatchers
 
 
@@ -307,11 +308,11 @@ class FragmentLabelInventory :
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-                if(mDeviceId.isNullOrBlank()){
+                /*if(mDeviceId.isNullOrBlank()){
                     mDeviceId = DataStoreUtils.getDeviceId(requireContext())
-                }
+                }*/
 
-                val call: Call<APIResponse.Response> = apiService.postData(mDeviceId, body)
+                val call: Call<APIResponse.Response> = apiService.postData(MainActivity.BRANCH_ID, body)
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {

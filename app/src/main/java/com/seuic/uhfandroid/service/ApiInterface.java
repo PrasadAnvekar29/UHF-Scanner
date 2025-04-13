@@ -12,7 +12,7 @@ public interface ApiInterface {
 
     @POST("api/goldloan/push")
  //   @POST("api/inventory/dummyread")
-    Call<APIResponse.Response> postData(@Header("device_id") String deviceId, @Body RequestBody data);
+    Call<APIResponse.Response> postData(@Header("branch-id") String deviceId, @Body RequestBody data);
 
 
 

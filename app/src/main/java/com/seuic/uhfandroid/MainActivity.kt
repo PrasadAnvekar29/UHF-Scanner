@@ -42,6 +42,13 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     private val fragmentReadAndWrite by lazy { FragmentReadAndWrite() }
     private val TAG = MainActivity::class.simpleName
 
+    companion object {
+
+        const val BRANCH_ID = "7273"
+
+    }
+
+
     private fun showFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val beginTransaction = fragmentManager.beginTransaction()
@@ -99,6 +106,9 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                 showFragment(fragmentParameterSetting)
             }
         }
+
+
+        v.branchId.setText("Branch Id : "+ BRANCH_ID)
 
     }
 
