@@ -18,8 +18,10 @@
                 android:id="@+id/btn_single_card"
                 android:text="@string/single_card"
                 style="@style/btn_style"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                />
             <Button
 
                 android:id="@+id/btn_search_for_card"

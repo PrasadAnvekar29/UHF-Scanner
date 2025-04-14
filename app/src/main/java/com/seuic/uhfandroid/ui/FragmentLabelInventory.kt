@@ -4,6 +4,7 @@ package com.seuic.uhfandroid.ui
 import android.app.AlertDialog
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,6 +41,10 @@ import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLHandshakeException
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.seuic.uhfandroid.service.BaseApiResponse
+
 
 class FragmentLabelInventory :
     BaseFragment<ViewModelLabelInventory, FragmentLabelInventoryBinding>()
@@ -60,11 +65,11 @@ class FragmentLabelInventory :
 
             mBranchId = DataStoreUtils.getBranchId(requireActivity())
 
-            if(!mBranchId.isNullOrBlank()){
+            if(mBranchId.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
+            } else {
                 // Call your API here
                 callNetworkAPI()
-            } else {
-                Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
             }
 
 
@@ -304,29 +309,31 @@ class FragmentLabelInventory :
          //   addToDatabase(vm.listTagData)
 
 
-       //     var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
+            var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
 
 
-            if(vm.listTagData.size > 0){
+            Log.v("Prasad", "1")
+            if(!listNeedtoUpload.isNullOrEmpty()){
+                Log.v("Prasad","2")
          //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(vm.listTagData).toString())
+                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
 
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-
-
                 val call: Call<APIResponse.Response> = apiService.postData(mBranchId, body)
+
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
                         try {
-                            Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
-                            if(response.body() != null  && response.body()!!.isSuccess){
+                            Log.v("Prasad","3")
 
+                            if(response.body() != null  && response.body()!!.isSuccess){
+                                Toast.makeText(requireContext(),response.body()?.message, Toast.LENGTH_SHORT).show()
                                 if(response.body()!!.data != null ){
                                  //   vm.listTagData.clear()
                                  //   adapter.data.clear()
@@ -344,6 +351,10 @@ class FragmentLabelInventory :
                                /* vm.listTagData.clear()
                                 adapter.data.clear()
                                 adapter.notifyDataSetChanged()*/
+                            } else {
+                                val b = BaseApiResponse()
+                                val  msg: String = b.safeErrorResponse(response)
+                                Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
                         }
@@ -351,16 +362,12 @@ class FragmentLabelInventory :
 
                     override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
                         try {
-                            if (t is SSLHandshakeException) {
-                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-                            } else if (t is UnknownHostException || t is IllegalStateException) {
-                                Toast.makeText(requireContext(),"Please check your internet connection", Toast.LENGTH_SHORT).show()
-                            } else if (t is SocketTimeoutException) {
-                                Toast.makeText(requireContext(), "Request timeout, please try again.", Toast.LENGTH_SHORT).show()
-                                return
-                            } else {
-                                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
-                            }
+                            Log.v("Prasad","4")
+
+                            val b = BaseApiResponse()
+                            val  msg: String = b.safeErrorResponse(t)
+                            Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
+
                         } catch (e: Exception) {
                         }
                     }
