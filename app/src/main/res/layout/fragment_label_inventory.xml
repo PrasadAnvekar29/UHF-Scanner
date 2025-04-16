@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 />
             <Button
-
+                android:background="@drawable/button_enable"
                 android:id="@+id/btn_search_for_card"
                 android:text="@string/search_for_card"
                 style="@style/btn_style"
@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
+                android:background="@drawable/button_enable"
                 android:id="@+id/btn_stop_search_for_card"
                 style="@style/btn_style"
                 android:text="@string/stop_search_for_card"
@@ -43,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
             <Button
-
+                android:background="@drawable/button_enable"
                 android:id="@+id/btn_clear"
                 android:text="@string/clear"
                 style="@style/btn_style"

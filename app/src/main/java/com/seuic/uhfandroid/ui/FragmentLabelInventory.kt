@@ -128,6 +128,14 @@ class FragmentLabelInventory :
 
         // 连续寻卡
         v.btnSearchForCard.setOnClickListener {
+
+            mBranchId = DataStoreUtils.getBranchId(requireActivity())
+            if(mBranchId.isNullOrEmpty()){
+                (getActivity() as MainActivity).showDialog()
+                return@setOnClickListener
+            }
+
+
             isSearching = true
             v.tvTagNumber.text = "0"
             v.tvRecognizeTimes.text = "0"
