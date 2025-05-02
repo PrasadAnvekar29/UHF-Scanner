@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VRDDHII</string>
-    <string name="label_inventory">Tag Inventory</string>
-    <string name="parameter_settings">Parameter Settings</string>
+    <string name="label_inventory">Labels</string>
+    <string name="parameter_settings">Settings</string>
     <string name="read_and_write_tags">Tag Read AND Write</string>
     <string name="uf3_s">UF3-S</string>
     <string name="chinese">Chinese</string>

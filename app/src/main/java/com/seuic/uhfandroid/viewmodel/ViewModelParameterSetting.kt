@@ -90,11 +90,13 @@ class ViewModelParameterSetting : BaseViewModel() {
                                 + " writePower:" + it.writePower.toString()
                     )
 
-                    if(it.readPower.toInt() < 20){
+                    power.postValue(it.readPower.toInt())
+
+                    /*if(it.readPower.toInt() < 20){
                         power.postValue(it.readPower.toInt())
                     } else {
                         power.postValue(20)
-                    }
+                    }*/
 
                 }
             } else {
