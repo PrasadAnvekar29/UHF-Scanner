@@ -27,6 +27,21 @@ android {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
         }
     }
+
+
+
+    signingConfigs {
+        release {
+            keyAlias 'prasad'
+            keyPassword 'prasad'
+            storeFile file(System.properties['user.home'] + '/prasad.jks')
+            storePassword 'prasad'
+
+            v1SigningEnabled false
+            v2SigningEnabled true
+        }
+    }
+
     buildFeatures{
 
         // for view binding :
@@ -44,6 +59,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
