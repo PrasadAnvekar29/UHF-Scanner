@@ -1,16 +1,30 @@
 package com.seuic.uhfandroid.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import com.seuic.androidreader.bean.AntPowerData
+import com.seuic.androidreader.sdk.Constants
 import com.seuic.androidreader.sdk.ReaderErrorCode
 import com.seuic.androidreader.sdk.UhfReaderSdk
 import com.seuic.uhfandroid.base.BaseViewModel
 import com.seuic.uhfandroid.ext.currentAntennaArray
 import com.seuic.uhfandroid.util.BaseUtils
+import com.seuic.uhfandroid.util.DataStoreUtils
+import com.seuic.uhfandroid.util.SharedPreferencesUtils
 
 class ViewModelParameterSetting : BaseViewModel() {
-    var power = MutableLiveData<Int>()
+  //  var power = MutableLiveData<Int>()
+  var ant1Power = MutableLiveData<Int>()
+  var ant2Power = MutableLiveData<Int>()
+  var ant3Power = MutableLiveData<Int>()
+  var ant4Power = MutableLiveData<Int>()
+  var ant5Power = MutableLiveData<Int>()
+  var ant6Power = MutableLiveData<Int>()
+  var ant7Power = MutableLiveData<Int>()
+  var ant8Power = MutableLiveData<Int>()
+
     var region = MutableLiveData<Int>()
     var session = MutableLiveData<Int>()
 
@@ -80,7 +94,11 @@ class ViewModelParameterSetting : BaseViewModel() {
     }
 
     // 获取输出功率
-    fun getPower() {
+    fun getPower(context: Context) {
+
+        val sp = DataStoreUtils.getINSTANCE(context)
+
+
         UhfReaderSdk.getPower()?.let { result ->
             if (result.err == ReaderErrorCode.MT_OK_ERR.value) {
                 result.data?.filterNotNull()?.forEach {
@@ -90,7 +108,66 @@ class ViewModelParameterSetting : BaseViewModel() {
                                 + " writePower:" + it.writePower.toString()
                     )
 
-                    power.postValue(it.readPower.toInt())
+                 //   power.postValue(it.readPower.toInt())
+
+                    if(it.antid == 1){
+                        if(sp.getPower(sp.ant1PowerKey, context) == 0){
+                            ant1Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant1Power.postValue(sp.getPower(sp.ant1PowerKey, context))
+                        }
+                        sp.setPower(sp.ant1PowerKey, ant1Power.value , context)
+
+                    } else if(it.antid == 2){
+                        if(sp.getPower(sp.ant2PowerKey, context) == 0){
+                            ant2Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant2Power.postValue(sp.getPower(sp.ant2PowerKey, context))
+                        }
+                        sp.setPower(sp.ant2PowerKey, ant2Power.value, context )
+                    } else if(it.antid == 3){
+                        if(sp.getPower(sp.ant3PowerKey, context) == 0){
+                            ant3Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant3Power.postValue(sp.getPower(sp.ant3PowerKey, context))
+                        }
+                        sp.setPower(sp.ant3PowerKey, ant3Power.value, context )
+                    } else if(it.antid == 4){
+                        if(sp.getPower(sp.ant4PowerKey, context) == 0){
+                            ant4Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant4Power.postValue(sp.getPower(sp.ant4PowerKey, context))
+                        }
+                        sp.setPower(sp.ant4PowerKey, ant4Power.value, context )
+                    } else if(it.antid == 5){
+                        if(sp.getPower(sp.ant5PowerKey, context) == 0){
+                            ant5Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant5Power.postValue(sp.getPower(sp.ant5PowerKey, context))
+                        }
+                        sp.setPower(sp.ant5PowerKey, ant5Power.value, context )
+                    } else if(it.antid == 6){
+                        if(sp.getPower(sp.ant6PowerKey, context) == 0){
+                            ant6Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant6Power.postValue(sp.getPower(sp.ant6PowerKey, context))
+                        }
+                        sp.setPower(sp.ant6PowerKey, ant6Power.value, context )
+                    } else if(it.antid == 7){
+                        if(sp.getPower(sp.ant7PowerKey, context) == 0){
+                            ant7Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant7Power.postValue(sp.getPower(sp.ant7PowerKey, context))
+                        }
+                        sp.setPower(sp.ant7PowerKey, ant7Power.value, context )
+                    } else if(it.antid == 8){
+                        if(sp.getPower(sp.ant8PowerKey, context) == 0){
+                            ant8Power.postValue(it.readPower.toInt())
+                        } else {
+                            ant8Power.postValue(sp.getPower(sp.ant8PowerKey, context))
+                        }
+                        sp.setPower(sp.ant8PowerKey, ant8Power.value, context )
+                    }
 
                     /*if(it.readPower.toInt() < 20){
                         power.postValue(it.readPower.toInt())
@@ -343,8 +420,8 @@ class ViewModelParameterSetting : BaseViewModel() {
         }
     }
 
-    fun setPower(power: Int): Boolean {
-        val cPower = power
+    fun setPower(ant1Power: Int, ant2Power: Int, ant3Power: Int, ant4Power: Int, ant5Power: Int, ant6Power: Int, ant7Power: Int, ant8Power: Int): Boolean {
+        /*val cPower = power
         val rp = IntArray(8)
         for ((index, _) in rp.withIndex()) {
             rp[index] = cPower
@@ -357,10 +434,89 @@ class ViewModelParameterSetting : BaseViewModel() {
                 writePower = ((rp[i]).toShort())
             }
             array.add(antPowerData)
+        }*/
+
+        val array = mutableListOf<AntPowerData>()
+
+        if(ant1Power != 0){
+            val ant1PowerData = AntPowerData().apply {
+                antid =  1
+                readPower = (ant1Power.toShort())
+                writePower = (ant1Power.toShort())
+            }
+            array.add(ant1PowerData)
         }
+
+        if(ant2Power != 0){
+            val ant2PowerData = AntPowerData().apply {
+                antid =  2
+                readPower = (ant2Power.toShort())
+                writePower = (ant2Power.toShort())
+            }
+            array.add(ant2PowerData)
+        }
+
+        if(ant3Power != 0){
+            val ant3PowerData = AntPowerData().apply {
+                antid =  3
+                readPower = (ant3Power.toShort())
+                writePower = (ant3Power.toShort())
+            }
+            array.add(ant3PowerData)
+        }
+
+        if(ant4Power != 0){
+            val ant4PowerData = AntPowerData().apply {
+                antid =  4
+                readPower = (ant4Power.toShort())
+                writePower = (ant4Power.toShort())
+            }
+            array.add(ant4PowerData)
+        }
+
+
+        if(ant5Power != 0){
+            val ant5PowerData = AntPowerData().apply {
+                antid =  5
+                readPower = (ant5Power.toShort())
+                writePower = (ant5Power.toShort())
+            }
+            array.add(ant5PowerData)
+        }
+
+        if(ant6Power != 0){
+            val ant6PowerData = AntPowerData().apply {
+                antid =  6
+                readPower = (ant6Power.toShort())
+                writePower = (ant6Power.toShort())
+            }
+            array.add(ant6PowerData)
+        }
+
+        if(ant7Power != 0){
+            val ant7PowerData = AntPowerData().apply {
+                antid =  7
+                readPower = (ant7Power.toShort())
+                writePower = (ant7Power.toShort())
+            }
+            array.add(ant7PowerData)
+        }
+
+        if(ant8Power != 0){
+            val ant8PowerData = AntPowerData().apply {
+                antid =  8
+                readPower = (ant8Power.toShort())
+                writePower = (ant8Power.toShort())
+            }
+            array.add(ant8PowerData)
+        }
+
+
+
+
         val er = UhfReaderSdk.setPower(array.toTypedArray())
         return if (er == ReaderErrorCode.MT_OK_ERR.value) {
-            Log.i(TAG, "setPower: 设置成功$power")
+          //  Log.i(TAG, "setPower: 设置成功$power")
             true
         } else {
             Log.e(TAG, "setPower: 设置失败，返回码：$er")

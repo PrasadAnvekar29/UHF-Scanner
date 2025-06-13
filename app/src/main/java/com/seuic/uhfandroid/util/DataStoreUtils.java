@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.Preferences;
 import androidx.datastore.preferences.core.PreferencesKeys;
 import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStore;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,11 +23,20 @@ import io.reactivex.rxjava3.functions.Function;
 public class DataStoreUtils {
     private static final String TAG = DataStoreUtils.class.getSimpleName();
     private static volatile DataStoreUtils INSTANCE;
-    RxDataStore<Preferences> dataStore;
+    public static RxDataStore<Preferences> dataStore;
     private Context context;
 
+
     Preferences.Key<Boolean> isSearchingKey = PreferencesKeys.booleanKey("isSearching");
-    Preferences.Key<Integer> powerKey = PreferencesKeys.intKey("power");
+  //  Preferences.Key<Integer> powerKey = PreferencesKeys.intKey("power");
+    public String ant1PowerKey = "ant1Power";
+    public String ant2PowerKey = "ant2Power";
+    public String ant3PowerKey = "ant3Power";
+    public String ant4PowerKey = "ant4Power";
+    public String ant5PowerKey = "ant5Power";
+    public String ant6PowerKey = "ant6Power";
+    public String ant7PowerKey = "ant7Power";
+    public String ant8PowerKey = "ant8Power";
     Preferences.Key<Integer> regionKey = PreferencesKeys.intKey("region");
     Preferences.Key<Integer> sessionKey = PreferencesKeys.intKey("session");
     Preferences.Key<Integer> qKey = PreferencesKeys.intKey("Q");
@@ -130,7 +140,7 @@ public class DataStoreUtils {
         return this;
     }
 
-    public Integer getPower() {
+    /*public Integer getPower() {
         try {
             Flowable<Integer> integer = getInteger(powerKey);
             return integer.first(33).blockingGet();
@@ -142,7 +152,22 @@ public class DataStoreUtils {
     public DataStoreUtils setPower(Integer power) {
         putInteger(powerKey, power);
         return this;
+    }*/
+
+    /*public Integer getPower(Preferences.Key<Integer> AntIdPowerKey) {
+        try {
+            Flowable<Integer> integer = getInteger(AntIdPowerKey);
+            return integer.first(0).blockingGet();
+        } catch (Exception e) {
+            return 0;
+        }
     }
+
+    public DataStoreUtils setPower(Preferences.Key<Integer> AntIdPowerKey,Integer power) {
+        putInteger(AntIdPowerKey, power);
+        return INSTANCE;
+    }*/
+
 
     public Integer getRegion() {
         try {
@@ -520,7 +545,7 @@ public class DataStoreUtils {
         });
     }
 
-    private void putInteger(Preferences.Key<Integer> key, Integer value) {
+    public static void putInteger(Preferences.Key<Integer> key, Integer value) {
         dataStore.updateDataAsync(new Function<Preferences, Single<Preferences>>() {
             @Override
             public Single<Preferences> apply(Preferences preferences) throws Throwable {
@@ -552,7 +577,7 @@ public class DataStoreUtils {
         return example;
     }
 
-    private Flowable<Integer> getInteger(Preferences.Key<Integer> key) {
+    public static Flowable<Integer> getInteger(Preferences.Key<Integer> key) {
         Flowable<Integer> example = dataStore.data().map(new Function<Preferences, Integer>() {
             @Override
             public Integer apply(Preferences preferences) {
@@ -579,6 +604,20 @@ public class DataStoreUtils {
         return gson;
     }
 
+
+    private static void setChacheValue(Context context, String type, String key, Integer value){
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(type, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = sharedPreferences.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+    private static Integer getChacheValue(Context context, String type, String key){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(type, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(key, 0);
+    }
+
     private static void setChacheData(Context context, String type, String key, String value){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(type, Context.MODE_PRIVATE);
@@ -597,6 +636,13 @@ public class DataStoreUtils {
     }
     public static String getBranchId(Context context) {
         return TextUtils.isEmpty(getChacheData(context, BRANCH_ID, BRANCH_ID)) ? "" :  getChacheData(context, BRANCH_ID, BRANCH_ID) ;
+    }
+
+    public void setPower(String antPower, Integer powerValue, Context context) {
+        setChacheValue(context, antPower, antPower, powerValue);
+    }
+    public Integer getPower(String antPower, Context context) {
+        return getChacheValue(context, antPower, antPower) ;
     }
 
 }

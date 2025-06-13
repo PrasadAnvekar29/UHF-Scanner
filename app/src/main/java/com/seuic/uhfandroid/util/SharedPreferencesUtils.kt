@@ -12,7 +12,7 @@ class SharedPreferencesUtils(context: Context) {
     private val isSearchingStr = "isSearching"
 
     // 功率
-    private val powerStr = "power"
+  //  private val powerStr = "power"
 
     // 频段
     private val regionStr = "region"
@@ -95,9 +95,9 @@ class SharedPreferencesUtils(context: Context) {
         return sp.getBoolean(enableBuzzerStr, true)
     }
 
-    fun getPower(): Int {
+    /*fun getPower(): Int {
         return sp.getInt(powerStr, 33)
-    }
+    }*/
 
     /*
         RG_NONE(0),
@@ -221,10 +221,10 @@ class SharedPreferencesUtils(context: Context) {
         return this
     }
 
-    fun setPower(power: Int): SharedPreferencesUtils {
+    /*fun setPower(power: Int): SharedPreferencesUtils {
         editor.putInt(powerStr, power).commit()
         return this
-    }
+    }*/
 
     fun setRegion(region: Int): SharedPreferencesUtils {
         editor.putInt(regionStr, region).commit()

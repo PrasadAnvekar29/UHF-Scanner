@@ -29,7 +29,7 @@ class FragmentParameterSetting :
         // 附加数据
         vm.getEmbeddedData()
         // 功率
-        vm.getPower()
+        vm.getPower(requireContext())
         // 工作频段
         vm.getRegion()
         // session
@@ -70,10 +70,18 @@ class FragmentParameterSetting :
         }
         // 初始化功率、工作频段、q值的三个下拉列表
         val list = ArrayList<String>()
-        for (index in 1..33) {
+        for (index in 0..33) {
             list.add(index.toString())
         }
-        setDefaultSpData(v.spOutputPower, list)
+    //    setDefaultSpData(v.spOutputPower, list)
+        setDefaultSpData(v.ant1Power, list)
+        setDefaultSpData(v.ant2Power, list)
+        setDefaultSpData(v.ant3Power, list)
+        setDefaultSpData(v.ant4Power, list)
+        setDefaultSpData(v.ant5Power, list)
+        setDefaultSpData(v.ant6Power, list)
+        setDefaultSpData(v.ant7Power, list)
+        setDefaultSpData(v.ant8Power, list)
    //     v.spOutputPower.setSelection(list.indexOf("20"))
 
         var workFrequency = resources.getStringArray(R.array.sp_work_frequency_band_English)
@@ -135,14 +143,25 @@ class FragmentParameterSetting :
             } else {
                 // 设置天线
                 val ltp = arrayListOf<Int>()
-                if (v.rbAnt1.isChecked) ltp.add(1)
+                /*if (v.rbAnt1.isChecked) ltp.add(1)
                 if (v.rbAnt2.isChecked) ltp.add(2)
                 if (v.rbAnt3.isChecked) ltp.add(3)
                 if (v.rbAnt4.isChecked) ltp.add(4)
                 if (v.rbAnt5.isChecked) ltp.add(5)
                 if (v.rbAnt6.isChecked) ltp.add(6)
                 if (v.rbAnt7.isChecked) ltp.add(7)
-                if (v.rbAnt8.isChecked) ltp.add(8)
+                if (v.rbAnt8.isChecked) ltp.add(8)*/
+
+                ltp.add(1)
+                ltp.add(2)
+                ltp.add(3)
+                ltp.add(4)
+                ltp.add(5)
+                ltp.add(6)
+                ltp.add(7)
+                ltp.add(8)
+
+
                 // 设置附加数据
                 val st = v.etStartAddress.text.toString()
                 val ct = v.etLength.text.toString()
@@ -170,13 +189,23 @@ class FragmentParameterSetting :
                     }
                     // 设置附加数据
                     // tid2 user3
-                    if (!vm.setEmbeddedData(st, ct, v.spStorageArea.selectedItemPosition + 2, pwd, v.cbEnableadd.isChecked)) res.append("附加数据 ")
+                    if (!vm.setEmbeddedData(st, ct, v.spStorageArea.selectedItemPosition + 2, pwd, v.cbEnableadd.isChecked)) res.append("Additional data ")
                     // 设置功率
-                    val power = v.spOutputPower.selectedItemPosition + 1
-                    if (!vm.setPower(power)) {
-                        res.append("功率 ")
+                  //  val power = v.spOutputPower.selectedItemPosition + 1
+                    if (!vm.setPower(v.ant1Power.selectedItemPosition, v.ant2Power.selectedItemPosition, v.ant2Power.selectedItemPosition,
+                            v.ant4Power.selectedItemPosition, v.ant5Power.selectedItemPosition, v.ant6Power.selectedItemPosition,
+                            v.ant7Power.selectedItemPosition, v.ant8Power.selectedItemPosition)) {
+                        res.append("Introduce local variable ")
                     } else {
-                        sp.power = v.spOutputPower.selectedItemPosition + 1
+                    //    sp.power = v.spOutputPower.selectedItemPosition + 1
+                        sp.setPower(sp.ant1PowerKey, v.ant1Power.selectedItemPosition, requireContext() )
+                        sp.setPower(sp.ant2PowerKey, v.ant2Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant3PowerKey, v.ant3Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant4PowerKey, v.ant4Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant5PowerKey, v.ant5Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant6PowerKey, v.ant6Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant7PowerKey, v.ant7Power.selectedItemPosition, requireContext())
+                        sp.setPower(sp.ant8PowerKey, v.ant8Power.selectedItemPosition, requireContext())
                     }
                     // 工作频段
                     val tempValue: String = when (v.spWorkFrequencyBand.selectedItemPosition) {
@@ -186,7 +215,7 @@ class FragmentParameterSetting :
                         else -> "FCC"
                     }
                     if (!vm.setRegion(tempValue))
-                        res.append("工作频段 ")
+                        res.append("Working frequency band ")
                     else
                         sp.region = v.spWorkFrequencyBand.selectedItemPosition
                     // session,profile,target,q
@@ -266,7 +295,7 @@ class FragmentParameterSetting :
                 ) { _, _ ->
                     // 设置功能
                     currentAntennaArray = intArrayOf()
-                    vm.setPower(33)
+                    vm.setPower(33,33,33,33,33,33,33,33)
                     vm.setRegion("FCC")
                     vm.setSession(0)
                     vm.setProfile(0)
@@ -280,9 +309,17 @@ class FragmentParameterSetting :
                     UhfReaderSdk.setFilter(0, 0, "", isInvert = false, enable = false)
 
                     // 更新界面
-                    v.spOutputPower.setSelection(32)
+                 //   v.spOutputPower.setSelection(32)
+                    v.ant1Power.setSelection(32)
+                    v.ant2Power.setSelection(32)
+                    v.ant3Power.setSelection(32)
+                    v.ant4Power.setSelection(32)
+                    v.ant5Power.setSelection(32)
+                    v.ant6Power.setSelection(32)
+                    v.ant7Power.setSelection(32)
+                    v.ant8Power.setSelection(32)
                     v.spWorkFrequencyBand.setSelection(0)
-                    v.cbCheckant.isChecked = true
+                //    v.cbCheckant.isChecked = true
                     v.spSession.setSelection(0)
                     v.spProfile.setSelection(0)
                     v.spTarget.setSelection(0)
@@ -300,8 +337,7 @@ class FragmentParameterSetting :
                     v.tvHardwareVersion.text = ""
                     v.spBuzzer.setSelection(0)
                     // 更新sharedPreferences
-                    sp.setPower(33)
-                        .setRegion(0)
+                    sp.setRegion(0)
                         .setSession(0)
                         .setProfile(0)
                         .setTarget(0)
@@ -312,7 +348,16 @@ class FragmentParameterSetting :
                         .setGpo4(false)
                         .enableBuzzer = true
 
-                    vm.getPower()
+                    sp.setPower(sp.ant1PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant2PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant3PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant4PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant5PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant6PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant7PowerKey, 33, requireContext())
+                    sp.setPower(sp.ant8PowerKey, 33, requireContext())
+
+                    vm.getPower(requireContext())
                     vm.getRegion()
                     vm.getSession()
                     vm.getProfile()
@@ -338,9 +383,34 @@ class FragmentParameterSetting :
     override fun initVM() {
 /*        connectResult.observe(this, {
         })*/
-        vm.power.observe(this) {
+        /*vm.power.observe(this) {
             v.spOutputPower.setSelection(it - 1)
+        }*/
+        vm.ant1Power.observe(this) {
+            v.ant1Power.setSelection(it)
         }
+        vm.ant2Power.observe(this) {
+            v.ant2Power.setSelection(it)
+        }
+        vm.ant3Power.observe(this) {
+            v.ant3Power.setSelection(it)
+        }
+        vm.ant4Power.observe(this) {
+            v.ant4Power.setSelection(it)
+        }
+        vm.ant5Power.observe(this) {
+            v.ant5Power.setSelection(it )
+        }
+        vm.ant6Power.observe(this) {
+            v.ant6Power.setSelection(it)
+        }
+        vm.ant7Power.observe(this) {
+            v.ant7Power.setSelection(it)
+        }
+        vm.ant8Power.observe(this) {
+            v.ant8Power.setSelection(it)
+        }
+
         vm.region.observe(this) {
             v.spWorkFrequencyBand.setSelection(it)
         }
@@ -389,58 +459,80 @@ class FragmentParameterSetting :
             }
         }
         vm.connAnt.observe(this) {
-            v.rbAnt1.isChecked = false
+            /*v.rbAnt1.isChecked = false
             v.rbAnt2.isChecked = false
             v.rbAnt3.isChecked = false
             v.rbAnt4.isChecked = false
             v.rbAnt5.isChecked = false
             v.rbAnt6.isChecked = false
             v.rbAnt7.isChecked = false
-            v.rbAnt8.isChecked = false
-            v.rbAnt1.isEnabled = true//false
+            v.rbAnt8.isChecked = false*/
+           /* v.rbAnt1.isEnabled = true//false
             v.rbAnt2.isEnabled = true//false
             v.rbAnt3.isEnabled = true//false
             v.rbAnt4.isEnabled = true//false
             v.rbAnt5.isEnabled = true//false
             v.rbAnt6.isEnabled = true//false
             v.rbAnt7.isEnabled = true//false
-            v.rbAnt8.isEnabled = true//false
+            v.rbAnt8.isEnabled = true//false*/
+
+            /*v.ant1Power.setSelection(0)
+            v.ant2Power.setSelection(0)
+            v.ant3Power.setSelection(0)
+            v.ant4Power.setSelection(0)
+            v.ant5Power.setSelection(0)
+            v.ant6Power.setSelection(0)
+            v.ant7Power.setSelection(0)
+            v.ant8Power.setSelection(0)
+
+             v.ant1Power.isEnabled = true//false
+             v.ant2Power.isEnabled = true//false
+             v.ant3Power.isEnabled = true//false
+             v.ant4Power.isEnabled = true//false
+             v.ant5Power.isEnabled = true//false
+             v.ant6Power.isEnabled = true//false
+             v.ant7Power.isEnabled = true//false
+             v.ant8Power.isEnabled = true//false
+
+
+
+
             for (bean in currentAntennaArray) {
                 when (bean) {
                     1 -> {
-                        v.rbAnt1.isChecked = true
-                        v.rbAnt1.isEnabled = true
+                      //  v.rbAnt1.isChecked = true
+                        v.ant1Power.isEnabled = true
                     }
                     2 -> {
-                        v.rbAnt2.isChecked = true
-                        v.rbAnt2.isEnabled = true
+                      //  v.rbAnt2.isChecked = true
+                        v.ant2Power.isEnabled = true
                     }
                     3 -> {
-                        v.rbAnt3.isChecked = true
-                        v.rbAnt3.isEnabled = true
+                      //  v.rbAnt3.isChecked = true
+                        v.ant3Power.isEnabled = true
                     }
                     4 -> {
-                        v.rbAnt4.isChecked = true
-                        v.rbAnt4.isEnabled = true
+                      //  v.rbAnt4.isChecked = true
+                        v.ant4Power.isEnabled = true
                     }
                     5 -> {
-                        v.rbAnt5.isChecked = true
-                        v.rbAnt5.isEnabled = true
+                     //   v.rbAnt5.isChecked = true
+                        v.ant5Power.isEnabled = true
                     }
                     6 -> {
-                        v.rbAnt6.isChecked = true
-                        v.rbAnt6.isEnabled = true
+                    //    v.rbAnt6.isChecked = true
+                        v.ant6Power.isEnabled = true
                     }
                     7 -> {
-                        v.rbAnt7.isChecked = true
-                        v.rbAnt7.isEnabled = true
+                    //    v.rbAnt7.isChecked = true
+                        v.ant7Power.isEnabled = true
                     }
                     8 -> {
-                        v.rbAnt8.isChecked = true
-                        v.rbAnt8.isEnabled = true
+                    //    v.rbAnt8.isChecked = true
+                        v.ant8Power.isEnabled = true
                     }
                 }
-            }
+            }*/
         }
         vm.additionalDataByteCount.observe(this) {
             v.cbEnableadd.isChecked = it.isNotEmpty()

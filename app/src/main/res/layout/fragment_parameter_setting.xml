@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="horizontal">
 
 
     <ScrollView
@@ -27,7 +26,14 @@
                     android:orientation="vertical"
                     android:padding="15dp">
 
-                    <LinearLayout
+                    <CheckBox
+                        android:id="@+id/cb_checkant"
+                        style="@style/normal_tv_first"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="invisible" />
+
+                   <!-- <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_marginTop="20dp"
@@ -62,7 +68,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/dbm" />
-                    </LinearLayout>
+                    </LinearLayout>-->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -86,9 +92,9 @@
 
                             <Spinner
                                 android:id="@+id/sp_work_frequency_band"
+                                style="@style/sp_style"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                style="@style/sp_style"/>
+                                android:layout_height="wrap_content" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -137,9 +143,266 @@
                         android:layout_marginRight="5dp"
                         android:background="@drawable/rectangle_line"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Antenna Power"/>
+
+
 
                         <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:weightSum="4">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 1 "
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_1_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 2"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_2_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 3"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_3_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 4"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_4_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:weightSum="4"
+                                >
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 5"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_5_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 6"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_6_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 7"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_7_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+
+                                    android:layout_weight="1"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        style="@style/normal_tv_first"
+                                        android:layout_width="60dp"
+                                        android:layout_height="wrap_content"
+                                        android:text="Ant 8"
+                                        android:layout_gravity="center"/>
+
+                                    <Spinner
+                                        android:id="@+id/ant_8_power"
+                                        style="@style/sp_style"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        style="@style/normal_tv"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="@string/dbm" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+
+
+
+                        <!--<LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -226,7 +489,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/ant8" />
-                        </LinearLayout>
+                        </LinearLayout>-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -237,7 +500,7 @@
                         android:layout_marginRight="5dp"
                         android:background="@drawable/rectangle_line"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -771,7 +1034,6 @@
 
 
     </ScrollView>
-
 
 
 </LinearLayout>
