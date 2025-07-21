@@ -58,14 +58,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
+            buildConfigField("String", "BASE_URL", "\"https://vrddhii.in/muthootweb/\"")
             signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
+            buildConfigField("String", "BASE_URL", "\"https://vrddhii.in/muthootweb/\"")
         }
     }
     compileOptions {
