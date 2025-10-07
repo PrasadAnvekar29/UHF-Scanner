@@ -56,6 +56,10 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
+
+            ext.enableCrashlytics = false
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
@@ -129,6 +133,9 @@ dependencies {
     implementation "androidx.room:room-rxjava2:2.5.2"
     implementation "androidx.room:room-ktx:2.5.2"
 
+
+    //RootBeer
+    implementation "com.scottyab:rootbeer-lib:0.1.0"
 
   //  implementation "com.google.firebase:firebase-bom:30.1.0"
   //  implementation "com.google.firebase:firebase-analytics-ktx"

@@ -9,9 +9,11 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -21,13 +23,17 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import com.scottyab.rootbeer.RootBeer
+import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.util.DataStoreUtils
+import com.seuic.uhfandroid.util.DeveloperOptionsObserver
+import com.seuic.uhfandroid.util.Utility
 import java.lang.reflect.ParameterizedType
 
 
-abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatActivity() {
+abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatActivity(), DeveloperOptionsObserver.OnDeveloperOptionsChangedListener {
 
     lateinit var mContext: FragmentActivity
     lateinit var vm: VM
@@ -36,6 +42,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     private var loadingDialog: ProgressDialog? = null
     private val TAG = BaseActivity::class.simpleName
     var ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE: Int = 2323
+    private var developerOptionsObserver: DeveloperOptionsObserver? = null
 
 
     @Suppress("UNCHECKED_CAST")
@@ -63,12 +70,66 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         requestPermissions()
 
 
+        val rootBeer = RootBeer(this)
+        // if device is rooted , won't allow to use this application
+        // if device is rooted , won't allow to use this application
+        if (rootBeer.isRooted || rootBeer.isRootedWithBusyBoxCheck
+            || Utility.isDeviceRooted()
+            || Utility.checkBuildConfigIsEmulator(this)
+            || Utility.checkRunningProcesses(this)
+            || Utility.searchForMagisk(this)
+        ) {
+            if (!BuildConfig.DEBUG) {
+                try {
+                    Toast.makeText(applicationContext,"This is a rooted device, we don't allow the use of our mobile app on rooted devices",
+                        Toast.LENGTH_LONG).show()
+                    finish()
+                } catch (e: Exception) {
+
+                }
+            }
+        }
+
+
+        //        }
+        checkDeveloperMode()
+
         if (!Settings.canDrawOverlays(this)) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:$packageName")
             )
             startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    private fun checkDeveloperMode() {
+        val developerOptionsEnabled = Settings.Global.getInt(
+            getContentResolver(),
+            Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0
+        ) == 1
+
+        onDeveloperOptionsChanged(developerOptionsEnabled)
+
+        developerOptionsObserver = DeveloperOptionsObserver(this, Handler(), this)
+        getContentResolver().registerContentObserver(
+            Settings.Global.getUriFor(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED),
+            true, developerOptionsObserver!!
+        )
+    }
+
+    public override fun onDeveloperOptionsChanged(enabled: Boolean) {
+        // Handle developer options state change here
+        if (!BuildConfig.DEBUG && enabled) {
+            try {
+                Toast.makeText(
+                    getApplicationContext(),
+                    "Developer mode detected. Turn it off to continue using the application.",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+            } catch (e: java.lang.Exception) {
+            }
         }
     }
 
