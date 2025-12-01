@@ -4,6 +4,7 @@
     <string-array name="sp_work_frequency_band_English">
         <item>FCC(902~928)MHz</item>
         <item>China1(920~925)MHz</item>
+        <item>ETSI(865~868)MHz</item>
     </string-array>
     <string-array name="sp_work_agreement">
         <item>ISO18000-6C</item>

@@ -6,7 +6,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <LinearLayout
 
             android:layout_marginTop="20dp"
@@ -59,7 +59,7 @@
             android:layout_marginTop="20dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <TextView
                 android:text="@string/tag_number"
                 style="@style/normal_tv_first"
@@ -97,6 +97,14 @@
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/base_url"
+            android:text=""
+            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
     <LinearLayout

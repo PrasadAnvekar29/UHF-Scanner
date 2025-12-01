@@ -62,14 +62,26 @@ android {
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
+
+            //Prod
+         //   buildConfigField("String", "BASE_URL", "\"https://swarnamayilrfid.chola.murugappa.com/\"")
+
+            //Uat
+            buildConfigField("String", "BASE_URL", "\"https://readerprocess-uat.chola.murugappa.com/\"")
+         //   buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
             signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
+            //Prod
+      //      buildConfigField("String", "BASE_URL", "\"https://swarnamayilrfid.chola.murugappa.com/\"")
+
+            //Uat
+            buildConfigField("String", "BASE_URL", "\"https://readerprocess-uat.chola.murugappa.com/\"")
+
+       //     buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
         }
     }
     compileOptions {

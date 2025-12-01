@@ -81,7 +81,7 @@ class FragmentParameterSetting :
             v.spWorkFrequencyBand,
             workFrequency.toList() as ArrayList<String>
         )
-        v.spWorkFrequencyBand.setSelection(0)
+        v.spWorkFrequencyBand.setSelection(2)
         val qList = ArrayList<String>()
         qList.add(getString(R.string.auto))
         for (index in 0..15) {
@@ -182,7 +182,7 @@ class FragmentParameterSetting :
                     val tempValue: String = when (v.spWorkFrequencyBand.selectedItemPosition) {
                         0 -> "FCC"
                         1 -> "China1"
-                        //2 -> "ETSI"
+                        2 -> "ETSI"
                         else -> "FCC"
                     }
                     if (!vm.setRegion(tempValue))
@@ -281,7 +281,7 @@ class FragmentParameterSetting :
 
                     // 更新界面
                     v.spOutputPower.setSelection(32)
-                    v.spWorkFrequencyBand.setSelection(0)
+                    v.spWorkFrequencyBand.setSelection(2)
                     v.cbCheckant.isChecked = true
                     v.spSession.setSelection(0)
                     v.spProfile.setSelection(0)

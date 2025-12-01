@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seuic.androidreader.sdk.Constants
+import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.MainActivity
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.adapter.TagInfoAdapter
@@ -105,6 +106,7 @@ class FragmentLabelInventory :
     }
 
     override fun initView() {
+        v.baseUrl.text = BuildConfig.BASE_URL
     }
 
     override fun initClick() {
