@@ -335,7 +335,7 @@ class FragmentLabelInventory :
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, body)
+                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, BuildConfig.API_KEY , body)
 
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {

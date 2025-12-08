@@ -62,7 +62,7 @@ android {
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-
+            buildConfigField("String", "API_KEY", "\"aP9xH3mK7nR4T8vB2jF6Q1sW5yE9uL0zC4rM8pV2tX7wS3dG\"")
             //Prod
          //   buildConfigField("String", "BASE_URL", "\"https://swarnamayilrfid.chola.murugappa.com/\"")
 
@@ -74,6 +74,8 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "API_KEY", "\"aP9xH3mK7nR4T8vB2jF6Q1sW5yE9uL0zC4rM8pV2tX7wS3dG\"")
+
 
             //Prod
       //      buildConfigField("String", "BASE_URL", "\"https://swarnamayilrfid.chola.murugappa.com/\"")

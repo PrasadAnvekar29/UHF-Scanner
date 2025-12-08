@@ -183,7 +183,7 @@ class FragmentParameterSetting :
                         0 -> "FCC"
                         1 -> "China1"
                         2 -> "ETSI"
-                        else -> "FCC"
+                        else -> "ETSI"
                     }
                     if (!vm.setRegion(tempValue))
                         res.append("工作频段 ")
@@ -267,7 +267,7 @@ class FragmentParameterSetting :
                     // 设置功能
                     currentAntennaArray = intArrayOf()
                     vm.setPower(33)
-                    vm.setRegion("FCC")
+                    vm.setRegion("ETSI")
                     vm.setSession(0)
                     vm.setProfile(0)
                     vm.setTarget(0)
