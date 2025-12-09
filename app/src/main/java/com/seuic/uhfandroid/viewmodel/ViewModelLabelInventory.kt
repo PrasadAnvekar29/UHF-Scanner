@@ -211,7 +211,7 @@ class ViewModelLabelInventory : BaseViewModel() {
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr()))
+            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr(),i.getAntennaIDStr()))
         }
 
         return tagDataEntry

@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName
 class TagDataEntry(
     @field:ColumnInfo(name = "epcId") @field:SerializedName("epcId") var epcId: String,
     @field:ColumnInfo(name = "antenna") @field:SerializedName("antenna") var antenna: String,
+    @field:ColumnInfo(name = "additionalData") @field:SerializedName("additionalData") var additionalData: String
 ) {
     @Transient
     @PrimaryKey(autoGenerate = true)
