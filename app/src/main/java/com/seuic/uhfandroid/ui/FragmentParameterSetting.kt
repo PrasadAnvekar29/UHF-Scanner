@@ -301,7 +301,7 @@ class FragmentParameterSetting :
                     v.spBuzzer.setSelection(0)
                     // 更新sharedPreferences
                     sp.setPower(33)
-                        .setRegion(0)
+                        .setRegion(2)
                         .setSession(0)
                         .setProfile(0)
                         .setTarget(0)
