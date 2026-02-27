@@ -11,7 +11,7 @@ import com.seuic.uhfandroid.util.BaseUtils
 
 class ViewModelParameterSetting : BaseViewModel() {
     var power = MutableLiveData<Int>()
-    var region = MutableLiveData<Int>()
+    var region = MutableLiveData<Int>(2)
     var session = MutableLiveData<Int>()
 
     // profile下标
@@ -122,7 +122,7 @@ class ViewModelParameterSetting : BaseViewModel() {
                         // 欧洲
                         region.postValue(2)
                     }
-                    else -> region.postValue(1)
+                    else -> region.postValue(2)
                 }
             } else {
                 Log.e(TAG, "getRegion: 获取失败")
