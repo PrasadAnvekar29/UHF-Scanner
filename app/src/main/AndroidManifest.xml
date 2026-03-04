@@ -36,7 +36,10 @@
             </intent-filter>
         </activity>
 
-
+        <activity
+            android:name=".LogsActivity"
+            android:exported="false">
+        </activity>
 
 
         <receiver

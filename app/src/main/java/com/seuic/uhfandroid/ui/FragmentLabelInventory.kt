@@ -2,6 +2,8 @@ package com.seuic.uhfandroid.ui
 
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -44,7 +46,15 @@ import javax.net.ssl.SSLHandshakeException
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.service.BaseApiResponse
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import java.math.MathContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class FragmentLabelInventory :
@@ -54,31 +64,12 @@ class FragmentLabelInventory :
 
 {
 
+        var errorCount = 0
+
 
     private var mDataBase : UFHDatabase? = null
     private var mBranchId : String? = null
-
-
-    private var handler3 = Handler()
-    private var runnable3: Runnable = object : Runnable {
-        override fun run() {
-
-
-            mBranchId = DataStoreUtils.getBranchId(requireActivity())
-
-            if(mBranchId.isNullOrEmpty()){
-                Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
-            } else {
-                // Call your API here
-                callNetworkAPI()
-            }
-
-
-
-            // Schedule the runnable to run again after 10 seconds
-            handler3.postDelayed(this, 10000)
-        }
-    }
+    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.getDefault())
 
 
 
@@ -177,6 +168,9 @@ class FragmentLabelInventory :
             CoroutineScope(Dispatchers.IO).launch {
                 mDataBase?.tagDataDao()?.deleteAll()
                 mDataBase?.tagDataDao()?.truncateAll()
+
+                mDataBase?.logDao()?.deleteAll()
+                mDataBase?.logDao()?.truncateAll()
             }
 
 
@@ -280,7 +274,9 @@ class FragmentLabelInventory :
             }
 
 
-            handler3.post(runnable3)
+            startPostTask()
+            startHeartBeatTask()
+
 
             if(mDataBase == null){
                 mDataBase = UFHDatabase.getDatabase(requireContext())
@@ -349,7 +345,7 @@ class FragmentLabelInventory :
                                  //   adapter.data.clear()
                                 //    adapter.notifyDataSetChanged()
 
-
+                                    errorCount = 0;
                                     removerFromDatabase(response.body()!!.data)
 
                                 }
@@ -365,6 +361,12 @@ class FragmentLabelInventory :
                                 val b = BaseApiResponse()
                                 val  msg: String = b.safeErrorResponse(response)
                                 Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
+                                errorCount++
+                                CoroutineScope(IO).launch {
+                                    mDataBase?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
+
+                                }
+                                restartApp(requireContext())
                             }
                         } catch (e: Exception) {
                         }
@@ -373,10 +375,15 @@ class FragmentLabelInventory :
                     override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
                         try {
                             Log.v("Prasad","4")
+                            errorCount++
 
                             val b = BaseApiResponse()
                             val  msg: String = b.safeErrorResponse(t)
                             Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
+                            CoroutineScope(IO).launch {
+                                mDataBase?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
+                            }
+                            restartApp(requireContext())
 
                         } catch (e: Exception) {
                         }
@@ -386,33 +393,6 @@ class FragmentLabelInventory :
             }
         }
 
-
-
-      //  var dataList : List<TagDataEntry>? = mDataBase?.tagDataDao()!!.getList()
-
-      //  listNeedtoUpload.addAll(dataList!!)
-
-      //  var listNeedtoUpload : List<TagDataEntry>?  = mDataBase?.tagDataDao()!!.getList()
-        //   var listNeedtoUpload : List<TagBean>  = vm.listTagData
-
-      //  listNeedtoUpload.addAll(list)
-
-      //  if(vm.listTagData.size > 0){
-        /*if(listNeedtoUpload.size > 0){
-            //   if(listNeedtoUpload != null && listNeedtoUpload.isNotEmpty()){
-            val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-            val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
-
-
-            val apiService: ApiInterface = ApiClient.getClient()
-                .create(ApiInterface::class.java)
-            val call: Call<APIResponse> = apiService.postData(body)
-            call.enqueue(this)
-
-        }*/
-
-
-
     }
 
 
@@ -421,11 +401,11 @@ class FragmentLabelInventory :
     //    mDataBase?.tagDataDao()?.insert(map(list))
 
         CoroutineScope(IO).launch {
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1","1"))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2","1"))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1","1"))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2","1"))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1","1",""))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2","1",""))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1","1",""))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2","1",""))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1","1",""))
         }
 
     }
@@ -443,10 +423,107 @@ class FragmentLabelInventory :
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna, i.antenna))
+            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna, i.antenna, ""))
         }
 
         return tagDataEntry
+    }
+
+    fun startPostTask() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                mBranchId = DataStoreUtils.getBranchId(requireActivity())
+
+                if(mBranchId.isNullOrEmpty()){
+
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Call your API here
+                    callNetworkAPI()
+                }
+                delay(10_000) // 30 min
+            }
+        }
+    }
+
+
+    fun startHeartBeatTask() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                mBranchId = DataStoreUtils.getBranchId(requireActivity())
+
+                if(mBranchId.isNullOrEmpty()){
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Call your API here
+                    callHeartBeatNetworkAPI()
+                }
+                delay(1800000) // 30 min
+            }
+        }
+    }
+
+    fun callHeartBeatNetworkAPI() {
+
+
+        CoroutineScope(IO).launch {
+            val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+         //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
+
+
+            val apiService: ApiInterface = ApiClient.getClient()
+                .create(ApiInterface::class.java)
+
+            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, BuildConfig.API_KEY)
+
+            call.enqueue(object : Callback<APIResponse.Response?> {
+                override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
+                    try {
+                        Log.v("Prasad","3")
+
+                        if(response.body() != null  && response.body()!!.isSuccess){
+                            Toast.makeText(requireContext(),"Heart Beats "+response.body()?.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            val b = BaseApiResponse()
+                            val  msg: String = b.safeErrorResponse(response)
+                            Toast.makeText(requireContext(), "Heart Beats "+msg , Toast.LENGTH_SHORT).show()
+
+                        }
+                    } catch (e: Exception) {
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
+                    try {
+                        val b = BaseApiResponse()
+                        val  msg: String = b.safeErrorResponse(t)
+                        Toast.makeText(requireContext(), "Heart Beats "+ msg , Toast.LENGTH_SHORT).show()
+
+                    } catch (e: Exception) {
+                    }
+                }
+            })
+        }
+    }
+
+
+    fun restartApp(context: Context){
+
+        if(errorCount >= 6){
+            val packageManager = context.packageManager
+            val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+            intent?.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+            )
+            context.startActivity(intent)
+            Runtime.getRuntime().exit(0)
+        }
+
     }
 
 }

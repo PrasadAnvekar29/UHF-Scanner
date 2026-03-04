@@ -56,6 +56,18 @@
                 android:layout_centerInParent="true"
                 android:text="@string/label_inventory" />
         </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/ll_logs"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/selector_main"
+            android:padding="15dp">
+
+            <TextView
+                style="@style/normal_btn"
+                android:layout_centerInParent="true"
+                android:text="Logs" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/ll_parameter_set"

@@ -8,11 +8,12 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [TagDataEntry::class], version = 1, exportSchema = false)
+@Database(entities = [TagDataEntry::class, LogEntry::class], version = 2, exportSchema = false)
 abstract class UFHDatabase : RoomDatabase() {
 
 
     abstract fun tagDataDao(): TagDataDao?
+    abstract fun logDao(): LogDao?
 
 
     companion object {
@@ -29,6 +30,7 @@ abstract class UFHDatabase : RoomDatabase() {
                         // Create database here
                         INSTANCE = databaseBuilder(context.applicationContext,
                             UFHDatabase::class.java, DATABASE_NAME)
+                            .fallbackToDestructiveMigration()
                             .build()
 
                         Log.d("Database", "Made new database");

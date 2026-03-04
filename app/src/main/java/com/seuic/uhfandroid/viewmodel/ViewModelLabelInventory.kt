@@ -22,6 +22,8 @@ import androidx.lifecycle.Observer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import kotlin.text.format
 
 
 class ViewModelLabelInventory : BaseViewModel() {
@@ -44,7 +46,7 @@ class ViewModelLabelInventory : BaseViewModel() {
     var errData = MutableLiveData<ReaderErrorCode>()
     var tagListData = MutableLiveData<MutableList<TagDataEntry>>()
 
-
+    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.getDefault())
 
     var statenvtick = 0L
     private var startSearching = true
@@ -60,7 +62,7 @@ class ViewModelLabelInventory : BaseViewModel() {
                     2 -> {
                         // Continuous card search
 
-                        addToDatabase(tags)
+                        addToDatabase(tags, formatter.format(Date()))
 
 
 
@@ -123,7 +125,7 @@ class ViewModelLabelInventory : BaseViewModel() {
 
 
 
-    fun addToDatabase(tags: List<TagInfo>){
+    fun addToDatabase(tags: List<TagInfo>, timeStamp: String){
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -131,7 +133,7 @@ class ViewModelLabelInventory : BaseViewModel() {
                     mDataBase = UFHDatabase.getDatabase(mContext!!)
                 }
 
-                mDataBase?.tagDataDao()?.insert(map(tags))
+                mDataBase?.tagDataDao()?.insert(map(tags, timeStamp))
 
             }catch (e : Exception){
 
@@ -207,11 +209,11 @@ class ViewModelLabelInventory : BaseViewModel() {
         return result
     }
 
-    fun map(list : List<TagInfo>) : List<TagDataEntry>{
+    fun map(list : List<TagInfo>, timeStamp: String) : List<TagDataEntry>{
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr(),i.getAntennaIDStr()))
+            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr(),i.getAntennaIDStr(), timeStamp))
         }
 
         return tagDataEntry

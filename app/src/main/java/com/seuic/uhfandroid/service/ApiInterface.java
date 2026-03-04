@@ -17,5 +17,8 @@ public interface ApiInterface {
                                         @Body RequestBody data);
 
 
-
+    @POST("reader")
+        //   @POST("api/inventory/dummyread")
+    Call<APIResponse.Response> postHearBeat(@Header("branch-id") String deviceId,
+                                        @Header("x-api-key") String apiKey);
 }
