@@ -19,7 +19,6 @@ import com.seuic.uhfandroid.databinding.ActivityMainBinding
 import com.seuic.uhfandroid.ext.connectResult
 import com.seuic.uhfandroid.ext.isSearching
 import com.seuic.uhfandroid.ui.FragmentLabelInventory
-import com.seuic.uhfandroid.ui.FragmentLog
 import com.seuic.uhfandroid.ui.FragmentParameterSetting
 import com.seuic.uhfandroid.ui.FragmentReadAndWrite
 import com.seuic.uhfandroid.util.DataStoreUtils

@@ -2,14 +2,13 @@ package com.esthenos.presentation.ui.attendance
 
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.seuic.uhfandroid.LogsActivity
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.database.LogEntry
 
 
-class AttendanceListViewHolder(itemView: View, private val mActivity: LogsActivity) : RecyclerView.ViewHolder(itemView) {
+class LogsViewHolder(itemView: View, private val mActivity: LogsActivity) : RecyclerView.ViewHolder(itemView) {
 
     private var model: LogEntry? = null
     private val tv_serial_number: TextView
