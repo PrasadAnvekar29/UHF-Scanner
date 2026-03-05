@@ -514,6 +514,9 @@ class FragmentLabelInventory :
     fun restartApp(context: Context){
 
         if(errorCount >= 6){
+
+            v.btnStopSearchForCard.performClick()
+            
             val packageManager = context.packageManager
             val intent = packageManager.getLaunchIntentForPackage(context.packageName)
             intent?.addFlags(
@@ -522,6 +525,16 @@ class FragmentLabelInventory :
             )
             context.startActivity(intent)
             Runtime.getRuntime().exit(0)
+            /*try {
+                var intent = Intent(Intent.ACTION_REBOOT);
+                intent.putExtra("nowait", 1);
+                intent.putExtra("interval", 1);
+                intent.putExtra("window", 0);
+                context.sendBroadcast(intent);
+            }catch (e: Exception){
+
+            }*/
+
         }
 
     }
