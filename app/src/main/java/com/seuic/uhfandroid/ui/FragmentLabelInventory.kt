@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.JsonObject
 import com.seuic.androidreader.sdk.Constants
 import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.MainActivity
@@ -17,6 +18,7 @@ import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.adapter.TagInfoAdapter
 import com.seuic.uhfandroid.base.BaseFragment
 import com.seuic.uhfandroid.bean.TagBean
+import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.database.TagDataEntry
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.databinding.FragmentLabelInventoryBinding
@@ -28,33 +30,26 @@ import com.seuic.uhfandroid.ext.resetCurrentTag
 import com.seuic.uhfandroid.service.APIResponse
 import com.seuic.uhfandroid.service.ApiClient
 import com.seuic.uhfandroid.service.ApiInterface
+import com.seuic.uhfandroid.service.BaseApiResponse
 import com.seuic.uhfandroid.util.DataStoreUtils
 import com.seuic.uhfandroid.viewmodel.ViewModelLabelInventory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLHandshakeException
-
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.seuic.uhfandroid.database.LogEntry
-import com.seuic.uhfandroid.service.BaseApiResponse
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
-import java.math.MathContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 
 class FragmentLabelInventory :
@@ -70,29 +65,29 @@ class FragmentLabelInventory :
     private var mDataBase : UFHDatabase? = null
     private var mBranchId : String? = null
     val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.getDefault())
-
-
-
-    val handler2 = Handler()
     private val adapter = TagInfoAdapter(R.layout.layout_tag)
-    private val runnable = object : Runnable {
-        override fun run() {
-            val currentTime = System.currentTimeMillis() - vm.statenvtick
 
-            val hms = java.lang.String.format(
-                "%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentTime),
-                TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(currentTime)),
-                TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime))
-            )
-            //   println(hms)
+    private var timerJob: Job? = null
 
-            //    v.tvInventoryTime.text = currentTime.toString()
-            v.tvInventoryTime.text = hms
-            handler2.postDelayed(this, 10)
+    fun startTimer() {
+        timerJob = CoroutineScope(Dispatchers.Default).launch {
+            while (isActive) {
 
-            //    val currentTime = System.currentTimeMillis() - vm.statenvtick
-            //     v.tvInventoryTime.text = currentTime.toString()
-            //     handler2.postDelayed(this, 10)
+
+                val currentTime = System.currentTimeMillis() - vm.statenvtick
+
+                val hms = java.lang.String.format(
+                    "%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentTime),
+                    TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(currentTime)),
+                    TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime))
+                )
+
+                withContext(Dispatchers.Main){
+                    v.tvInventoryTime.text = hms
+                }
+
+                delay(10) // 10 milliseconds
+            }
         }
     }
 
@@ -105,7 +100,10 @@ class FragmentLabelInventory :
         v.btnSingleCard.setOnClickListener {
             vm.stopSearchForCard()
             v.btnSearchForCard.isEnabled = true
-            handler2.removeCallbacks(runnable)
+
+            timerJob?.cancel()
+
+          //  handler2.removeCallbacks(runnable)
             v.tvInventoryTime.text = "0"
             v.tvTagNumber.text = "0"
             v.tvRecognizeTimes.text = "0"
@@ -141,14 +139,17 @@ class FragmentLabelInventory :
             vm.searchForCard()
 
             v.btnSearchForCard.isEnabled = false
-            handler2.postDelayed(runnable, 0)
+            startTimer()
+           // handler2.postDelayed(runnable, 0)
         }
 
         // 停止连续寻卡
         v.btnStopSearchForCard.setOnClickListener {
             vm.stopSearchForCard()
             v.btnSearchForCard.isEnabled = true
-            handler2.removeCallbacks(runnable)
+
+            timerJob?.cancel()
+           // handler2.removeCallbacks(runnable)
             isSearching = false
             resetCurrentTag.postValue(true)
             itemClickable.postValue(true)
@@ -253,7 +254,8 @@ class FragmentLabelInventory :
     override fun onDestroy() {
         super.onDestroy()
         vm.stopSearchForCard()
-        handler2.removeCallbacks(runnable)
+        timerJob?.cancel()
+     //   handler2.removeCallbacks(runnable)
         vm.unregisterListener()
     }
 
@@ -276,7 +278,7 @@ class FragmentLabelInventory :
 
             startPostTask()
             startHeartBeatTask()
-
+            startHardwareBeatTask()
 
             if(mDataBase == null){
                 mDataBase = UFHDatabase.getDatabase(requireContext())
@@ -443,7 +445,7 @@ class FragmentLabelInventory :
                     // Call your API here
                     callNetworkAPI()
                 }
-                delay(10_000) // 30 min
+                delay(10_000) // 10 seconds
             }
         }
     }
@@ -462,11 +464,28 @@ class FragmentLabelInventory :
                     // Call your API here
                     callHeartBeatNetworkAPI()
                 }
-                delay(1800000) // 30 min
+                delay(600000) // 10 min
             }
         }
     }
 
+    fun startHardwareBeatTask() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                mBranchId = DataStoreUtils.getBranchId(requireActivity())
+
+                if(mBranchId.isNullOrEmpty()){
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Call your API here
+                    callHardwareNetworkAPI()
+                }
+                delay(600000) // 10 min
+            }
+        }
+    }
     fun callHeartBeatNetworkAPI() {
 
 
@@ -474,11 +493,15 @@ class FragmentLabelInventory :
             val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
          //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("branchCode", mBranchId)
+            jsonObject.addProperty("time", formatter.format(Date()))
+
 
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
 
-            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, BuildConfig.API_KEY)
+            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, BuildConfig.API_KEY, jsonObject)
 
             call.enqueue(object : Callback<APIResponse.Response?> {
                 override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
@@ -502,6 +525,48 @@ class FragmentLabelInventory :
                         val b = BaseApiResponse()
                         val  msg: String = b.safeErrorResponse(t)
                         Toast.makeText(requireContext(), "Heart Beats "+ msg , Toast.LENGTH_SHORT).show()
+
+                    } catch (e: Exception) {
+                    }
+                }
+            })
+        }
+    }
+
+    fun callHardwareNetworkAPI() {
+
+
+        CoroutineScope(IO).launch {
+            val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+            //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
+
+
+            val apiService: ApiInterface = ApiClient.getClient()
+                .create(ApiInterface::class.java)
+
+            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, BuildConfig.API_KEY)
+
+            call.enqueue(object : Callback<APIResponse.Response?> {
+                override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
+                    try {
+
+                        if(response.body() != null  && response.body()!!.isSuccess){
+                            Toast.makeText(requireContext(),"Hardware "+response.body()?.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            val b = BaseApiResponse()
+                            val  msg: String = b.safeErrorResponse(response)
+                            Toast.makeText(requireContext(), "Hardware "+msg , Toast.LENGTH_SHORT).show()
+
+                        }
+                    } catch (e: Exception) {
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
+                    try {
+                        val b = BaseApiResponse()
+                        val  msg: String = b.safeErrorResponse(t)
+                        Toast.makeText(requireContext(), "Hardware "+ msg , Toast.LENGTH_SHORT).show()
 
                     } catch (e: Exception) {
                     }
