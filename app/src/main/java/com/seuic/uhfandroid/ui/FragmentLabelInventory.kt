@@ -464,7 +464,7 @@ class FragmentLabelInventory :
                     // Call your API here
                     callHeartBeatNetworkAPI()
                 }
-                delay(600000) // 10 min
+                delay(1800000) // 30 min
             }
         }
     }
@@ -482,7 +482,7 @@ class FragmentLabelInventory :
                     // Call your API here
                     callHardwareNetworkAPI()
                 }
-                delay(600000) // 10 min
+                delay(1800000) // 30 min
             }
         }
     }
@@ -578,7 +578,7 @@ class FragmentLabelInventory :
 
     fun restartApp(context: Context){
 
-        if(errorCount >= 6){
+        if(errorCount >= 120){ // 20min
 
             v.btnStopSearchForCard.performClick()
             
