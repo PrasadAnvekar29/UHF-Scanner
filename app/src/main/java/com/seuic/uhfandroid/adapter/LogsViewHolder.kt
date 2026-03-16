@@ -22,7 +22,7 @@ class LogsViewHolder(itemView: View, private val mActivity: LogsActivity) : Recy
 
     fun bind(position: Int, model: LogEntry) {
         this.model = model
-        tv_serial_number.text = (model.id + 1).toString()
+        tv_serial_number.text = (position + 1).toString()
         tv_name.text = model.error
         tv_times.text = model.time
 

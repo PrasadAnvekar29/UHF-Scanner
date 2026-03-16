@@ -29,10 +29,17 @@ interface LogDao {
     @Query("SELECT * from log_data_table ORDER BY id DESC ")
     fun getList(): List<LogEntry>
 
+    @Query("""
+DELETE FROM log_data_table
+WHERE "time" IS NOT NULL
+AND date(
+    substr("time",7,4) || '-' ||
+    substr("time",4,2) || '-' ||
+    substr("time",1,2)
+) < date('now','-3 day')
+""")
+    suspend fun deleteOlderThan3Days()
 
-
-  //  @Query("SELECT * from tag_data_table")
- //   suspend fun getList(): List<LogEntry>?
 
 
 }

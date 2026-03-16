@@ -290,7 +290,7 @@ class FragmentLabelInventory :
             mDataBase?.tagDataDao()?.getListLiveData()
             ?.observe(this, Observer { listData: MutableList<TagDataEntry> -> this.getListLiveData(listData) })
 
-
+            detele3DaysLogsData()
          //   addToDatabase(null)
         }, 3000)
 
@@ -600,6 +600,24 @@ class FragmentLabelInventory :
 
             }*/
 
+        }
+
+    }
+
+    fun detele3DaysLogsData(){
+
+        CoroutineScope(IO).launch {
+
+            try {
+                if(mDataBase == null){
+                    mDataBase = UFHDatabase.getDatabase(requireContext())
+                }
+
+                mDataBase?.logDao()?.deleteOlderThan3Days()
+
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
         }
 
     }
