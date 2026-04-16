@@ -272,7 +272,10 @@ class FragmentLabelInventory :
             if(mBranchId.isNullOrEmpty()){
                 (getActivity() as MainActivity).showDialog()
             } else {
-                v.btnSearchForCard.performClick()
+                if(!isSearching){
+                    v.btnSearchForCard.performClick()
+                }
+
             }
 
 
@@ -292,7 +295,7 @@ class FragmentLabelInventory :
 
             detele3DaysLogsData()
          //   addToDatabase(null)
-        }, 3000)
+        }, 90000)
 
     }
 
@@ -580,7 +583,14 @@ class FragmentLabelInventory :
 
         if(errorCount >= 120){ // 20min
 
-            v.btnStopSearchForCard.performClick()
+            vm.stopSearchForCard()
+            v.btnSearchForCard.isEnabled = true
+
+            timerJob?.cancel()
+            // handler2.removeCallbacks(runnable)
+            isSearching = false
+            resetCurrentTag.postValue(true)
+            itemClickable.postValue(true)
             
             val packageManager = context.packageManager
             val intent = packageManager.getLaunchIntentForPackage(context.packageName)
