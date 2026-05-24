@@ -64,7 +64,7 @@ class FragmentLabelInventory :
 
     private var mDataBase : UFHDatabase? = null
     private var mBranchId : String? = null
-    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
     private val adapter = TagInfoAdapter(R.layout.layout_tag)
 
     private var timerJob: Job? = null

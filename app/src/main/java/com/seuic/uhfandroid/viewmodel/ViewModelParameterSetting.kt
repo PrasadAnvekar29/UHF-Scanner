@@ -89,8 +89,8 @@ class ViewModelParameterSetting : BaseViewModel() {
                                 + " readPower:" + it.readPower.toString()
                                 + " writePower:" + it.writePower.toString()
                     )
-
-                    power.postValue(it.readPower.toInt())
+                    power.postValue(33)
+                  //  power.postValue(it.readPower.toInt())
 
                     /*if(it.readPower.toInt() < 20){
                         power.postValue(it.readPower.toInt())
@@ -109,7 +109,7 @@ class ViewModelParameterSetting : BaseViewModel() {
     fun getRegion() {
         UhfReaderSdk.getRegion()?.let { result ->
             if (result.err == ReaderErrorCode.MT_OK_ERR.value) {
-                when (result.data) {
+                /*when (result.data) {
                     "FCC" -> {
                         // 北美
                         region.postValue(0)
@@ -123,7 +123,8 @@ class ViewModelParameterSetting : BaseViewModel() {
                         region.postValue(2)
                     }
                     else -> region.postValue(2)
-                }
+                }*/
+                region.postValue(2)
             } else {
                 Log.e(TAG, "getRegion: 获取失败")
             }

@@ -179,12 +179,13 @@ class FragmentParameterSetting :
                         sp.power = v.spOutputPower.selectedItemPosition + 1
                     }
                     // 工作频段
-                    val tempValue: String = when (v.spWorkFrequencyBand.selectedItemPosition) {
+                    /*val tempValue: String = when (v.spWorkFrequencyBand.selectedItemPosition) {
                         0 -> "FCC"
                         1 -> "China1"
                         2 -> "ETSI"
                         else -> "ETSI"
-                    }
+                    }*/
+                    val tempValue =   "ETSI"
                     if (!vm.setRegion(tempValue))
                         res.append("工作频段 ")
                     else

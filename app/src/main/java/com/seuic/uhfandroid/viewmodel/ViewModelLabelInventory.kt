@@ -46,7 +46,7 @@ class ViewModelLabelInventory : BaseViewModel() {
     var errData = MutableLiveData<ReaderErrorCode>()
     var tagListData = MutableLiveData<MutableList<TagDataEntry>>()
 
-    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
 
     var statenvtick = 0L
     private var startSearching = true
