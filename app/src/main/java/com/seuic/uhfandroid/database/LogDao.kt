@@ -14,13 +14,13 @@ interface LogDao {
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(tagData: LogEntry)
+    fun insert(tagData: LogEntry)
 
     @Query("DELETE from log_data_table")
-    suspend fun deleteAll()
+    fun deleteAll()
 
     @Query("DELETE FROM sqlite_sequence WHERE name = 'log_data_table'")
-    suspend fun truncateAll()
+    fun truncateAll()
 
 
   //  @Query("DELETE from log_data_table")
@@ -38,7 +38,7 @@ AND date(
     substr("time",1,2)
 ) < date('now','-3 day')
 """)
-    suspend fun deleteOlderThan3Days()
+    fun deleteOlderThan3Days()
 
 
 

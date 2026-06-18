@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId "com.ukcorp.vrddhii"
         minSdk 24
-        targetSdk 31
+        targetSdk 34
         versionCode 100
         versionName "1.0.0"
 
@@ -46,6 +46,7 @@ android {
 
         // for view binding :
         viewBinding = true
+        buildConfig true
     }
     // 这里是配置JNI的引用地址，也就是引用.so文件
     sourceSets {

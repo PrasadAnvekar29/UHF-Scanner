@@ -405,13 +405,13 @@ class FragmentLabelInventory :
 
     //    mDataBase?.tagDataDao()?.insert(map(list))
 
-        CoroutineScope(IO).launch {
+       /* CoroutineScope(IO).launch {
             mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1","1",""))
             mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2","1",""))
             mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1","1",""))
             mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2","1",""))
             mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1","1",""))
-        }
+        }*/
 
     }
 
