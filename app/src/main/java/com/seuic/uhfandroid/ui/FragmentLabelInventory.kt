@@ -64,6 +64,8 @@ class FragmentLabelInventory :
 
     private var mDataBase : UFHDatabase? = null
     private var mBranchId : String? = null
+    private var mFBToken: String? = null
+
     val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
     private val adapter = TagInfoAdapter(R.layout.layout_tag)
 
@@ -121,7 +123,8 @@ class FragmentLabelInventory :
         v.btnSearchForCard.setOnClickListener {
 
             mBranchId = DataStoreUtils.getBranchId(requireActivity())
-            if(mBranchId.isNullOrEmpty()){
+            mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
+            if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
                 (getActivity() as MainActivity).showDialog()
                 return@setOnClickListener
             }
@@ -268,8 +271,9 @@ class FragmentLabelInventory :
         Handler(Looper.myLooper()!!).postDelayed({
 
             mBranchId = DataStoreUtils.getBranchId(requireContext())
+            mFBToken = DataStoreUtils.getFireBaseToken(requireContext())
 
-            if(mBranchId.isNullOrEmpty()){
+            if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
                 (getActivity() as MainActivity).showDialog()
             } else {
                 if(!isSearching){
@@ -438,8 +442,9 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
+                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty()){
+                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
 
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
@@ -458,8 +463,9 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
+                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty()){
+                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
                     }
@@ -476,8 +482,9 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
+                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty()){
+                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
                     }
@@ -630,6 +637,18 @@ class FragmentLabelInventory :
             }
         }
 
+    }
+
+    fun startReader(){
+        if(!isSearching){
+            v.btnSearchForCard.performClick()
+        }
+    }
+
+    fun stopReader(){
+        if(isSearching){
+            v.btnStopSearchForCard.performClick()
+        }
     }
 
 }

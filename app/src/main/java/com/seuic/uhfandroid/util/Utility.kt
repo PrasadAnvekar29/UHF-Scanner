@@ -3,6 +3,7 @@ package com.seuic.uhfandroid.util
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
@@ -16,6 +17,10 @@ import kotlin.text.contains
 class Utility {
 
     companion object{
+
+        const val ACTION_APPLICATION_STATUS_UPDATE = "com.ukcorp.vrddhii.firebase.READER_REQUEST"
+
+
 
         fun isDeviceRooted(): Boolean {
             return checkRootMethod1() || checkRootMethod2() || checkRootMethod3()
@@ -114,6 +119,16 @@ class Utility {
                     || androidId == null)
         }
 
+
+        fun getVersion(context: Context): String {
+            try {
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                return packageInfo!!.versionName!!
+            } catch (e: PackageManager.NameNotFoundException) {
+
+            }
+            return "version-na"
+        }
 
     }
 }

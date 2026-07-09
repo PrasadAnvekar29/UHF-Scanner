@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -23,6 +24,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.scottyab.rootbeer.RootBeer
 import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.R
@@ -35,6 +38,9 @@ import java.lang.reflect.ParameterizedType
 
 abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatActivity(), DeveloperOptionsObserver.OnDeveloperOptionsChangedListener {
 
+
+    private val REQUEST_CODE_ASK_PERMISSIONS = 1
+    private val REQUEST_CODE_ASK_EXTERNAL_STORAGE_PERMISSIONS = 2
     lateinit var mContext: FragmentActivity
     lateinit var vm: VM
     lateinit var v: VB
@@ -43,6 +49,9 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     private val TAG = BaseActivity::class.simpleName
     var ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE: Int = 2323
     private var developerOptionsObserver: DeveloperOptionsObserver? = null
+
+    private var firebaseToken: String = ""
+
 
 
     @Suppress("UNCHECKED_CAST")
@@ -59,6 +68,14 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         v = method.invoke(null, layoutInflater) as VB
         setContentView(v.root)
         mContext = this
+
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                return@OnCompleteListener
+            }
+            firebaseToken = task.result
+        })
 
         UFHDatabase.getDatabase(this)
 
@@ -162,10 +179,23 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                     ActivityCompat.requestPermissions(
                         this, arrayOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.POST_NOTIFICATIONS,
                             Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS
-                        ), 0x0010
+                        ), REQUEST_CODE_ASK_PERMISSIONS
+                    )
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (!Environment.isExternalStorageManager()) {
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    ActivityCompat.startActivityForResult(this,
+                        intent,
+                        REQUEST_CODE_ASK_EXTERNAL_STORAGE_PERMISSIONS, null
                     )
                 }
             }
@@ -189,7 +219,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     }
     private var alertDialogBuilder: AlertDialog.Builder? = null
 
-    protected fun showAlertDialog(alertTitle: String?, alertMessage: String?, positiveButtonTitle: String?,
+    protected fun showAlertDialog(alertTitle: String?, alertMessage: String?, fbToken: String?, positiveButtonTitle: String?,
                                   negativeButtonTitle: String?,  isCancelable : Boolean?, isEditable : Boolean, actionListener: AlertDialogActionListener?) {
         try {
 
@@ -198,6 +228,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
             alertDialogBuilder = AlertDialog.Builder(this)
             val mTitle = promptView.findViewById<View>(R.id.title) as AppCompatTextView
             val mBranchIdText = promptView.findViewById<View>(R.id.branch_id_text) as AppCompatTextView
+            val mFbTokenText = promptView.findViewById<View>(R.id.fb_token_text) as AppCompatTextView
             var mBranchId = promptView.findViewById<View>(R.id.branch_id) as AppCompatEditText
             val mPositive = promptView.findViewById<View>(R.id.positive) as AppCompatButton
             val mNegative = promptView.findViewById<View>(R.id.negative) as AppCompatButton
@@ -206,7 +237,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
             mBranchId.setText(alertMessage ?: "Message")
             mPositive.text = positiveButtonTitle ?: "Ok"
             mNegative.text = negativeButtonTitle ?: "Cancel"
-
+            mFbTokenText.text = "FB Token: " + fbToken
 
             alertDialogBuilder!!.setView(promptView)
             val alertDialog = alertDialogBuilder!!.create()
@@ -232,6 +263,8 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                 if(!mBranchId.text.toString().isNullOrEmpty()){
                     val branchId = mBranchId.text.toString().trim()
                     DataStoreUtils.setBranchId(branchId, this)
+                    DataStoreUtils.setFireBaseToken(firebaseToken, this)
+
                 }
                 actionListener?.action(true)
 

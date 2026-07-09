@@ -3,11 +3,18 @@ package com.seuic.uhfandroid
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.seuic.androidreader.sdk.Constants
@@ -15,6 +22,7 @@ import com.seuic.androidreader.sdk.ReaderErrorCode
 import com.seuic.androidreader.sdk.UhfReaderSdk
 import com.seuic.uhfandroid.base.BaseActivity
 import com.seuic.uhfandroid.base.BaseViewModel
+import com.seuic.uhfandroid.bean.ApkVersion
 import com.seuic.uhfandroid.databinding.ActivityMainBinding
 import com.seuic.uhfandroid.ext.connectResult
 import com.seuic.uhfandroid.ext.isSearching
@@ -22,11 +30,15 @@ import com.seuic.uhfandroid.ui.FragmentLabelInventory
 import com.seuic.uhfandroid.ui.FragmentParameterSetting
 import com.seuic.uhfandroid.ui.FragmentReadAndWrite
 import com.seuic.uhfandroid.util.DataStoreUtils
+import com.seuic.uhfandroid.util.Utility
 import com.seuic.util.common.ToastUtils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
@@ -110,7 +122,8 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
         v.llBranchId.setOnClickListener {
             val brachId = DataStoreUtils.getBranchId(this)
-            showAlertDialog(null, brachId, null, null, false, false ,null)
+            val fbToken = DataStoreUtils.getFireBaseToken(this)
+            showAlertDialog(null, brachId, fbToken, null, null, false, false ,null)
         }
 
         v.llSetBranchId.setOnClickListener {
@@ -119,6 +132,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         }
 
         val brachId = DataStoreUtils.getBranchId(this)
+        val fbToken = DataStoreUtils.getFireBaseToken(this)
         v.branchId.text = "Branch Id : " + brachId
     }
 
@@ -246,12 +260,14 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
     fun showSetBranchIdDialog(){
         val brachId = DataStoreUtils.getBranchId(this)
+        val fbToken = DataStoreUtils.getFireBaseToken(this)
 
-        showAlertDialog(   null, brachId ,
+        showAlertDialog(   null, brachId , fbToken,
             getString(R.string.yes), getString(R.string.no), false, true ,object : AlertDialogActionListener {
                 override fun action(isPositive: Boolean) {
                     try {
                         val brachId = DataStoreUtils.getBranchId(this@MainActivity)
+                        val fbToken = DataStoreUtils.getFireBaseToken(this@MainActivity)
                         v.branchId.text = "Branch Id : " + brachId
 
                     }catch (e : Exception){
@@ -265,6 +281,118 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     fun showDialog(){
         showSetBranchIdDialog()
     }
+
+
+    private val firebaseReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val status = intent?.getStringExtra("reader_request_type")
+            Log.d("firebase 1", status.toString())
+            readerRequestType(status!!)
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(
+                firebaseReceiver,
+                IntentFilter(Utility.ACTION_APPLICATION_STATUS_UPDATE),
+                RECEIVER_NOT_EXPORTED
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(firebaseReceiver)
+    }
+
+
+    fun readerRequestType(notificationType: String){
+        when (notificationType) {
+            "START" -> {
+                FragmentLabelInventory().startReader()
+            }
+            "STOP" -> {
+                FragmentLabelInventory().stopReader()
+            }
+            "UPDATE" ->{
+                val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
+                if(!TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                    updateAPk(apkVersion)
+                }
+            }
+            else -> {
+
+                val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
+                if(!TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                    updateAPk(apkVersion)
+                } else {
+                    if(DataStoreUtils.getRequestType(applicationContext).equals("START", true)){
+                        FragmentLabelInventory().startReader()
+                    } else {
+                        FragmentLabelInventory().stopReader()
+                    }
+                }
+
+
+
+            }
+        }
+    }
+
+
+
+    fun updateAPk(apkVersion : ApkVersion){
+        AlertDialog.Builder(this)
+            .setTitle("Warning")
+            .setMessage("Updated Version of App is available. Update your apk first")
+            .setCancelable(false)
+            .setPositiveButton("Ok") { dialog, _ ->
+                dialog.dismiss()
+                vm.showLoading("Please wait...", this)
+                vm.downloadApk(apkVersion.apkUrl!!, this)
+                    .observe(this, { resultState: String ->
+                        newApkPath(resultState)
+                    })
+            }
+            .show()
+    }
+
+
+
+
+    private fun newApkPath(apkPath: String) {
+        try {
+            if (!TextUtils.isEmpty(apkPath)) {
+                vm.hideLoading()
+                val toInstall = File(apkPath)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val apkUri = FileProvider.getUriForFile(
+                        applicationContext,
+                        applicationContext.packageName + ".fileprovider",
+                        toInstall
+                    )
+                    val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
+                    intent.setData(apkUri)
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                } else {
+                    val apkUri = Uri.fromFile(toInstall)
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
+            }
+        } catch (e: java.lang.Exception) {
+
+        }
+    }
+
+
+
 
 
 }

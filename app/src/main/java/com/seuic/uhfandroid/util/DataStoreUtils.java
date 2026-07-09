@@ -14,6 +14,7 @@ import androidx.datastore.rxjava3.RxDataStore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.seuic.uhfandroid.bean.ApkVersion;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
@@ -64,6 +65,10 @@ public class DataStoreUtils {
 
 
     public static final String BRANCH_ID = "branch_id";
+    public static final String FB_TOKEN = "fb_token";
+
+    public static final String APK_VERSION = "apk_version";
+    public static final String REQUEST_TYPE = "request_type";
 
 
     private DataStoreUtils(Context context) {
@@ -597,6 +602,29 @@ public class DataStoreUtils {
     }
     public static String getBranchId(Context context) {
         return TextUtils.isEmpty(getChacheData(context, BRANCH_ID, BRANCH_ID)) ? "" :  getChacheData(context, BRANCH_ID, BRANCH_ID) ;
+    }
+
+    public static void setFireBaseToken(String token, Context context) {
+        setChacheData(context, FB_TOKEN, FB_TOKEN, token);
+    }
+    public static String getFireBaseToken(Context context) {
+        return TextUtils.isEmpty(getChacheData(context, FB_TOKEN, FB_TOKEN)) ? "" :  getChacheData(context, FB_TOKEN, FB_TOKEN) ;
+    }
+
+    public static void setApkVersion(ApkVersion apkVersion, Context context) {
+        Gson gson = new Gson();
+        setChacheData(context, APK_VERSION, APK_VERSION, gson.toJson(apkVersion));
+    }
+    public static ApkVersion getApkVersion(Context context) {
+        return (new Gson()).fromJson(TextUtils.isEmpty(getChacheData(context, APK_VERSION, APK_VERSION)) ? "" :  getChacheData(context, APK_VERSION, APK_VERSION), ApkVersion.class);
+    }
+
+
+    public static void setRequestType(String requestType, Context context) {
+        setChacheData(context, REQUEST_TYPE, REQUEST_TYPE, requestType);
+    }
+    public static String getRequestType(Context context) {
+        return TextUtils.isEmpty(getChacheData(context, REQUEST_TYPE, REQUEST_TYPE)) ? "STOP" :  getChacheData(context, REQUEST_TYPE, REQUEST_TYPE) ;
     }
 
 }

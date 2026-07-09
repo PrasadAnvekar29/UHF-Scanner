@@ -92,7 +92,17 @@
                     android:background="@drawable/field_background"
                     android:layout_marginBottom="15dp"
                     />
-
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fb_token_text"
+                    android:text="Enter Branch Id"
+                    android:gravity="start"
+                    android:layout_marginHorizontal="20dp"
+                    android:textSize="15dp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="15dp"
+                    />
 
 
 
