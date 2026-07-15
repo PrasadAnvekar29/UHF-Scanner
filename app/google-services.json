@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1056135549145",
-    "project_id": "uhf-scanner",
-    "storage_bucket": "uhf-scanner.firebasestorage.app"
+    "project_number": "196112820927",
+    "project_id": "chola-6896c",
+    "storage_bucket": "chola-6896c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1056135549145:android:bbcbcce2453e3e59632ec8",
+        "mobilesdk_app_id": "1:196112820927:android:1435d7bf36a9fa9082740a",
         "android_client_info": {
           "package_name": "com.ukcorp.vrddhii"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB2M6hfI4RiMZay93whinaBoEMIE0XPVOw"
+          "current_key": "AIzaSyBhgXIApEg_yJUDrj-N5vFTE_OlrFkhzlg"
         }
       ],
       "services": {
