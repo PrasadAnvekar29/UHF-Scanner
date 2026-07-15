@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -75,6 +76,8 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                 return@OnCompleteListener
             }
             firebaseToken = task.result
+
+            Log.i("UHF FB token:", firebaseToken)
         })
 
         UFHDatabase.getDatabase(this)

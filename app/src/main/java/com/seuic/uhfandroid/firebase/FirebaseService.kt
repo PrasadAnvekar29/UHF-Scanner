@@ -36,7 +36,7 @@ class FirebaseService() : FirebaseMessagingService() {
 
             val notificationType = remoteMessage.data["reader_request_type"]
           //  val branchID = remoteMessage.data["branch_id"]
-
+            Log.i("Firebase:", remoteMessage.toString())
 
             if (!notificationType.isNullOrEmpty()) {
                 when (notificationType) {
