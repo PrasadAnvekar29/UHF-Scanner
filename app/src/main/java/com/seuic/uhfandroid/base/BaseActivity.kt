@@ -3,7 +3,6 @@ package com.seuic.uhfandroid.base
 import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -76,7 +75,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                 return@OnCompleteListener
             }
             firebaseToken = task.result
-
+            DataStoreUtils.setFireBaseToken(firebaseToken, this)
             Log.i("UHF FB token:", firebaseToken)
         })
 
@@ -142,12 +141,8 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         // Handle developer options state change here
         if (!BuildConfig.DEBUG && enabled) {
             try {
-                Toast.makeText(
-                    getApplicationContext(),
-                    "Developer mode detected. Turn it off to continue using the application.",
-                    Toast.LENGTH_LONG
-                ).show()
-                finish()
+                Toast.makeText(getApplicationContext(), "Developer mode detected. Turn it off to continue using the application.", Toast.LENGTH_LONG).show()
+            //    finish()
             } catch (e: java.lang.Exception) {
             }
         }
@@ -173,17 +168,18 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
 
     private fun requestPermissions() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(
-                    this, arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.POST_NOTIFICATIONS,
-                        Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS
-                    ), REQUEST_CODE_ASK_PERMISSIONS
-                )
-            }
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.LOCATION_HARDWARE,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_SETTINGS,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.READ_CONTACTS
+                ), REQUEST_CODE_ASK_PERMISSIONS
+            )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (!Environment.isExternalStorageManager()) {
@@ -194,6 +190,14 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                         intent,
                         REQUEST_CODE_ASK_EXTERNAL_STORAGE_PERMISSIONS, null
                     )
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (!getPackageManager().canRequestPackageInstalls()) {
+                    val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                        .setData(Uri.parse("package:" + getPackageName()))
+                    startActivityForResult(intent, REQUEST_CODE_ASK_PERMISSIONS)
                 }
             }
         } catch (e: Exception) {

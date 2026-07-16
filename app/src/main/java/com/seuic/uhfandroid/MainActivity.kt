@@ -386,7 +386,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                 }
             }
         } catch (e: java.lang.Exception) {
-
+            e.printStackTrace()
         }
     }
 
