@@ -107,7 +107,7 @@ class FragmentLabelInventory :
     }
 
     override fun initView() {
-        v.baseUrl.text = BuildConfig.BASE_URL
+        v.baseUrl.text = BuildConfig.BASE_URL +"\n App v"+ Utility.getVersion(requireContext())
     }
 
     override fun initClick() {
