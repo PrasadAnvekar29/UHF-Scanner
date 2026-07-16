@@ -26,7 +26,7 @@ class FirebaseService() : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
 
-        Log.e("RemmoteMessageTo", remoteMessage.data.toString());
+        Log.v("RemmoteMessageTo", remoteMessage.data.toString());
 
         handleFirebaseDataNotification(remoteMessage)
     }
@@ -35,8 +35,7 @@ class FirebaseService() : FirebaseMessagingService() {
         try {
 
             val notificationType = remoteMessage.data["reader_request_type"]
-          //  val branchID = remoteMessage.data["branch_id"]
-            Log.i("Firebase:", remoteMessage.toString())
+
 
             if (!notificationType.isNullOrEmpty()) {
                 when (notificationType) {

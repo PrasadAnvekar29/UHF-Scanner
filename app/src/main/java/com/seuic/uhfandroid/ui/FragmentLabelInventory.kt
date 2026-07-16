@@ -2,12 +2,20 @@ package com.seuic.uhfandroid.ui
 
 
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.RECEIVER_NOT_EXPORTED
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat.registerReceiver
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonObject
@@ -17,6 +25,7 @@ import com.seuic.uhfandroid.MainActivity
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.adapter.TagInfoAdapter
 import com.seuic.uhfandroid.base.BaseFragment
+import com.seuic.uhfandroid.bean.ApkVersion
 import com.seuic.uhfandroid.bean.TagBean
 import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.database.TagDataEntry
@@ -32,6 +41,7 @@ import com.seuic.uhfandroid.service.ApiClient
 import com.seuic.uhfandroid.service.ApiInterface
 import com.seuic.uhfandroid.service.BaseApiResponse
 import com.seuic.uhfandroid.util.DataStoreUtils
+import com.seuic.uhfandroid.util.Utility
 import com.seuic.uhfandroid.viewmodel.ViewModelLabelInventory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +56,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -53,17 +64,13 @@ import java.util.concurrent.TimeUnit
 
 
 class FragmentLabelInventory :
-    BaseFragment<ViewModelLabelInventory, FragmentLabelInventoryBinding>()
+    BaseFragment<ViewModelLabelInventory, FragmentLabelInventoryBinding>() {
+
+    var errorCount = 0
 
 
-
-{
-
-        var errorCount = 0
-
-
-    private var mDataBase : UFHDatabase? = null
-    private var mBranchId : String? = null
+    private var mDataBase: UFHDatabase? = null
+    private var mBranchId: String? = null
     private var mFBToken: String? = null
 
     val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
@@ -80,11 +87,17 @@ class FragmentLabelInventory :
 
                 val hms = java.lang.String.format(
                     "%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentTime),
-                    TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(currentTime)),
-                    TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime))
+                    TimeUnit.MILLISECONDS.toMinutes(currentTime) - TimeUnit.HOURS.toMinutes(
+                        TimeUnit.MILLISECONDS.toHours(
+                            currentTime
+                        )
+                    ),
+                    TimeUnit.MILLISECONDS.toSeconds(currentTime) - TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(currentTime)
+                    )
                 )
 
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     v.tvInventoryTime.text = hms
                 }
 
@@ -105,7 +118,7 @@ class FragmentLabelInventory :
 
             timerJob?.cancel()
 
-          //  handler2.removeCallbacks(runnable)
+            //  handler2.removeCallbacks(runnable)
             v.tvInventoryTime.text = "0"
             v.tvTagNumber.text = "0"
             v.tvRecognizeTimes.text = "0"
@@ -124,7 +137,7 @@ class FragmentLabelInventory :
 
             mBranchId = DataStoreUtils.getBranchId(requireActivity())
             mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
-            if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
+            if (mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()) {
                 (getActivity() as MainActivity).showDialog()
                 return@setOnClickListener
             }
@@ -143,7 +156,7 @@ class FragmentLabelInventory :
 
             v.btnSearchForCard.isEnabled = false
             startTimer()
-           // handler2.postDelayed(runnable, 0)
+            // handler2.postDelayed(runnable, 0)
         }
 
         // 停止连续寻卡
@@ -152,7 +165,7 @@ class FragmentLabelInventory :
             v.btnSearchForCard.isEnabled = true
 
             timerJob?.cancel()
-           // handler2.removeCallbacks(runnable)
+            // handler2.removeCallbacks(runnable)
             isSearching = false
             resetCurrentTag.postValue(true)
             itemClickable.postValue(true)
@@ -273,10 +286,10 @@ class FragmentLabelInventory :
             mBranchId = DataStoreUtils.getBranchId(requireContext())
             mFBToken = DataStoreUtils.getFireBaseToken(requireContext())
 
-            if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
+            if (mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()) {
                 (getActivity() as MainActivity).showDialog()
             } else {
-                if(!isSearching){
+                if (!isSearching) {
                     v.btnSearchForCard.performClick()
                 }
 
@@ -287,7 +300,7 @@ class FragmentLabelInventory :
             startHeartBeatTask()
             startHardwareBeatTask()
 
-            if(mDataBase == null){
+            if (mDataBase == null) {
                 mDataBase = UFHDatabase.getDatabase(requireContext())
             }
 
@@ -313,7 +326,7 @@ class FragmentLabelInventory :
 
     fun callNetworkAPI() {
 
-        if(mDataBase == null){
+        if (mDataBase == null) {
             mDataBase = UFHDatabase.getDatabase(requireContext())
         }
 
@@ -598,7 +611,7 @@ class FragmentLabelInventory :
             isSearching = false
             resetCurrentTag.postValue(true)
             itemClickable.postValue(true)
-            
+
             val packageManager = context.packageManager
             val intent = packageManager.getLaunchIntentForPackage(context.packageName)
             intent?.addFlags(
@@ -639,16 +652,26 @@ class FragmentLabelInventory :
 
     }
 
-    fun startReader(){
-        if(!isSearching){
-            v.btnSearchForCard.performClick()
+
+    fun startReader() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (!isSearching) {
+                delay(3_000) // 3 seconds
+                v.btnSearchForCard.performClick()
+
+            }
         }
+
     }
 
-    fun stopReader(){
-        if(isSearching){
-            v.btnStopSearchForCard.performClick()
+    fun stopReader() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (isSearching) {
+                delay(3_000) // 3 seconds
+                v.btnStopSearchForCard.performClick()
+            }
         }
+
     }
 
 }

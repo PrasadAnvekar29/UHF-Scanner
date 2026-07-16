@@ -36,6 +36,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -287,8 +289,8 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val status = intent?.getStringExtra("reader_request_type")
             Log.d("firebase 1", status.toString())
+         //   fragmentWriteReadDeviceConnect.readerRequestType(status!!)
             readerRequestType(status!!)
-
         }
     }
 
@@ -301,6 +303,8 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                 RECEIVER_NOT_EXPORTED
             )
         }
+
+        readerRequestType("")
     }
 
     override fun onPause() {
@@ -312,37 +316,32 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     fun readerRequestType(notificationType: String){
         when (notificationType) {
             "START" -> {
-                FragmentLabelInventory().startReader()
+                fragmentWriteReadDeviceConnect.startReader()
             }
             "STOP" -> {
-                FragmentLabelInventory().stopReader()
+                fragmentWriteReadDeviceConnect.stopReader()
             }
             "UPDATE" ->{
                 val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
-                if(!TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                if(apkVersion != null && !TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
                     updateAPk(apkVersion)
                 }
             }
             else -> {
 
                 val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
-                if(!TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                if(apkVersion != null && !TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
                     updateAPk(apkVersion)
                 } else {
                     if(DataStoreUtils.getRequestType(applicationContext).equals("START", true)){
-                        FragmentLabelInventory().startReader()
+                        fragmentWriteReadDeviceConnect.startReader()
                     } else {
-                        FragmentLabelInventory().stopReader()
+                        fragmentWriteReadDeviceConnect.stopReader()
                     }
                 }
-
-
-
             }
         }
     }
-
-
 
     fun updateAPk(apkVersion : ApkVersion){
         AlertDialog.Builder(this)
