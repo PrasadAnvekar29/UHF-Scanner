@@ -174,21 +174,15 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     private fun requestPermissions() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val permission = ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS
+                    ), REQUEST_CODE_ASK_PERMISSIONS
                 )
-                if (permission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                        this, arrayOf(
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.POST_NOTIFICATIONS,
-                            Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
-                            Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS
-                        ), REQUEST_CODE_ASK_PERMISSIONS
-                    )
-                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

@@ -14,16 +14,19 @@ public interface ApiInterface {
 
     @POST("api/goldloan/push")
     Call<APIResponse.Response> postData(@Header("branch-id") String deviceId,
+                                        @Header("fb-token") String fbToken,
                                         @Header("x-api-key") String apiKey,
                                         @Body RequestBody data);
 
 
     @POST("liveliness")
     Call<APIResponse.Response> postHearBeat(@Header("branch-id") String deviceId,
-                                        @Header("x-api-key") String apiKey,
+                                            @Header("fb-token") String fbToken,
+                                            @Header("x-api-key") String apiKey,
                                             @Body JsonObject data);
 
     @POST("reader")
     Call<APIResponse.Response> postHardwareBeat(@Header("branch-id") String deviceId,
-                                            @Header("x-api-key") String apiKey);
+                                                @Header("fb-token") String fbToken,
+                                                @Header("x-api-key") String apiKey);
 }

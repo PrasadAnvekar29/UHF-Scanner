@@ -61,15 +61,17 @@ class FirebaseService() : FirebaseMessagingService() {
 
         notifyUser(header, body)
 
-        if (!isAppInForeground()) {
-            launchApplication()
-        }
+
 
         val broadcastIntent = Intent(com.seuic.uhfandroid.util.Utility.ACTION_APPLICATION_STATUS_UPDATE).apply {
             setPackage(packageName)
             putExtra("reader_request_type", type)
         }
         sendBroadcast(broadcastIntent)
+
+        if (!isAppInForeground()) {
+            launchApplication()
+        }
 
     }
 
@@ -87,15 +89,17 @@ class FirebaseService() : FirebaseMessagingService() {
 
         notifyUser(header, body)
 
-        if (!isAppInForeground()) {
-            launchApplication()
-        }
+
 
         val broadcastIntent = Intent(com.seuic.uhfandroid.util.Utility.ACTION_APPLICATION_STATUS_UPDATE).apply {
             setPackage(packageName)
             putExtra("reader_request_type", type)
         }
         sendBroadcast(broadcastIntent)
+
+        if (!isAppInForeground()) {
+            launchApplication()
+        }
 
     }
 

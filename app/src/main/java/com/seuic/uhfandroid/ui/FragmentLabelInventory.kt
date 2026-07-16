@@ -353,7 +353,7 @@ class FragmentLabelInventory :
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, BuildConfig.API_KEY , body)
+                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, mFBToken,BuildConfig.API_KEY , body)
 
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
@@ -524,7 +524,7 @@ class FragmentLabelInventory :
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
 
-            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, BuildConfig.API_KEY, jsonObject)
+            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, mFBToken, BuildConfig.API_KEY, jsonObject)
 
             call.enqueue(object : Callback<APIResponse.Response?> {
                 override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
@@ -567,7 +567,7 @@ class FragmentLabelInventory :
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
 
-            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, BuildConfig.API_KEY)
+            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, mFBToken, BuildConfig.API_KEY)
 
             call.enqueue(object : Callback<APIResponse.Response?> {
                 override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
