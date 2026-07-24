@@ -6,6 +6,8 @@ import android.content.Context
 import android.widget.TabHost
 import com.seuic.androidreader.bean.SearchParams
 import com.seuic.androidreader.bean.TagInfo
+import com.seuic.uhfandroid.mqtt.MqttService
+import com.seuic.uhfandroid.util.DataStoreUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -19,6 +21,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         mContext=this
+
+        if (DataStoreUtils.getMqttEnabled(this)) {
+            MqttService.start(this)
+        }
     }
     var Constr_READ = "读"
     var Constr_CONNECT = "连接"

@@ -70,6 +70,12 @@ public class DataStoreUtils {
     public static final String APK_VERSION = "apk_version";
     public static final String REQUEST_TYPE = "request_type";
 
+    public static final String MQTT_ENABLED = "mqtt_enabled";
+    public static final String MQTT_BROKER_URL = "mqtt_broker_url";
+    public static final String MQTT_USERNAME = "mqtt_username";
+    public static final String MQTT_PASSWORD = "mqtt_password";
+    public static final String MQTT_CLIENT_ID = "mqtt_client_id";
+
 
     private DataStoreUtils(Context context) {
         this.context = context;
@@ -625,6 +631,45 @@ public class DataStoreUtils {
     }
     public static String getRequestType(Context context) {
         return TextUtils.isEmpty(getChacheData(context, REQUEST_TYPE, REQUEST_TYPE)) ? "STOP" :  getChacheData(context, REQUEST_TYPE, REQUEST_TYPE) ;
+    }
+
+    public static void setMqttEnabled(boolean enabled, Context context) {
+        setChacheData(context, MQTT_ENABLED, MQTT_ENABLED, Boolean.toString(enabled));
+    }
+    public static boolean getMqttEnabled(Context context) {
+        return Boolean.parseBoolean(getChacheData(context, MQTT_ENABLED, MQTT_ENABLED));
+    }
+
+    public static void setMqttBrokerUrl(String brokerUrl, Context context) {
+        setChacheData(context, MQTT_BROKER_URL, MQTT_BROKER_URL, brokerUrl);
+    }
+    public static String getMqttBrokerUrl(Context context) {
+        if(TextUtils.isEmpty(getChacheData(context, MQTT_BROKER_URL, MQTT_BROKER_URL))){
+            return  "tcp://192.168.1.125:1883";
+        }
+        return getChacheData(context, MQTT_BROKER_URL, MQTT_BROKER_URL);
+    }
+
+
+    public static void setMqttUsername(String username, Context context) {
+        setChacheData(context, MQTT_USERNAME, MQTT_USERNAME, username);
+    }
+    public static String getMqttUsername(Context context) {
+        return getChacheData(context, MQTT_USERNAME, MQTT_USERNAME);
+    }
+
+    public static void setMqttPassword(String password, Context context) {
+        setChacheData(context, MQTT_PASSWORD, MQTT_PASSWORD, password);
+    }
+    public static String getMqttPassword(Context context) {
+        return getChacheData(context, MQTT_PASSWORD, MQTT_PASSWORD);
+    }
+
+    public static void setMqttClientId(String clientId, Context context) {
+        setChacheData(context, MQTT_CLIENT_ID, MQTT_CLIENT_ID, clientId);
+    }
+    public static String getMqttClientId(Context context) {
+        return getChacheData(context, MQTT_CLIENT_ID, MQTT_CLIENT_ID);
     }
 
 }

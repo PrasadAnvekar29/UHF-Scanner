@@ -9,11 +9,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +32,7 @@ import com.seuic.uhfandroid.bean.ApkVersion
 import com.seuic.uhfandroid.databinding.ActivityMainBinding
 import com.seuic.uhfandroid.ext.connectResult
 import com.seuic.uhfandroid.ext.isSearching
+import com.seuic.uhfandroid.mqtt.MqttService
 import com.seuic.uhfandroid.ui.FragmentLabelInventory
 import com.seuic.uhfandroid.ui.FragmentParameterSetting
 import com.seuic.uhfandroid.ui.FragmentReadAndWrite
@@ -131,6 +138,10 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         v.llSetBranchId.setOnClickListener {
             showSetBranchIdDialog()
 
+        }
+
+        v.llMqttSettings.setOnClickListener {
+            showMqttSettingsDialog()
         }
 
         val brachId = DataStoreUtils.getBranchId(this)
@@ -282,6 +293,48 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
     fun showDialog(){
         showSetBranchIdDialog()
+    }
+
+    private fun showMqttSettingsDialog() {
+        try {
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val promptView = inflater.inflate(R.layout.dialog_mqtt, null)
+
+            val enabledSwitch = promptView.findViewById<SwitchCompat>(R.id.mqtt_enabled)
+            val brokerUrlEdit = promptView.findViewById<AppCompatEditText>(R.id.mqtt_broker_url)
+            val usernameEdit = promptView.findViewById<AppCompatEditText>(R.id.mqtt_username)
+            val passwordEdit = promptView.findViewById<AppCompatEditText>(R.id.mqtt_password)
+            val positiveButton = promptView.findViewById<AppCompatButton>(R.id.positive)
+            val negativeButton = promptView.findViewById<AppCompatButton>(R.id.negative)
+
+            enabledSwitch.isChecked = DataStoreUtils.getMqttEnabled(this)
+            brokerUrlEdit.setText(DataStoreUtils.getMqttBrokerUrl(this))
+            usernameEdit.setText(DataStoreUtils.getMqttUsername(this))
+            passwordEdit.setText(DataStoreUtils.getMqttPassword(this))
+
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(this).setView(promptView).create()
+
+            positiveButton.setOnClickListener {
+                val enabled = enabledSwitch.isChecked
+                DataStoreUtils.setMqttEnabled(enabled, this)
+                DataStoreUtils.setMqttBrokerUrl(brokerUrlEdit.text.toString().trim(), this)
+                DataStoreUtils.setMqttUsername(usernameEdit.text.toString().trim(), this)
+                DataStoreUtils.setMqttPassword(passwordEdit.text.toString(), this)
+
+                MqttService.stop(this)
+                if (enabled) {
+                    MqttService.start(this)
+                }
+
+                dialog.dismiss()
+            }
+            negativeButton.setOnClickListener { dialog.dismiss() }
+
+            dialog.show()
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to show MQTT settings dialog", e)
+        }
     }
 
 
