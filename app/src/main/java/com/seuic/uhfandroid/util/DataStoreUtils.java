@@ -65,7 +65,6 @@ public class DataStoreUtils {
 
 
     public static final String BRANCH_ID = "branch_id";
-    public static final String FB_TOKEN = "fb_token";
 
     public static final String APK_VERSION = "apk_version";
     public static final String REQUEST_TYPE = "request_type";
@@ -610,12 +609,6 @@ public class DataStoreUtils {
         return TextUtils.isEmpty(getChacheData(context, BRANCH_ID, BRANCH_ID)) ? "" :  getChacheData(context, BRANCH_ID, BRANCH_ID) ;
     }
 
-    public static void setFireBaseToken(String token, Context context) {
-        setChacheData(context, FB_TOKEN, FB_TOKEN, token);
-    }
-    public static String getFireBaseToken(Context context) {
-        return TextUtils.isEmpty(getChacheData(context, FB_TOKEN, FB_TOKEN)) ? "" :  getChacheData(context, FB_TOKEN, FB_TOKEN) ;
-    }
 
     public static void setApkVersion(ApkVersion apkVersion, Context context) {
         Gson gson = new Gson();

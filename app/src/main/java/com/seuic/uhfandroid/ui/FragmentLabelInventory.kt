@@ -14,7 +14,6 @@ import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat.registerReceiver
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -71,7 +70,7 @@ class FragmentLabelInventory :
 
     private var mDataBase: UFHDatabase? = null
     private var mBranchId: String? = null
-    private var mFBToken: String? = null
+ //   private var mFBToken: String? = null
 
     val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
     private val adapter = TagInfoAdapter(R.layout.layout_tag)
@@ -136,8 +135,8 @@ class FragmentLabelInventory :
         v.btnSearchForCard.setOnClickListener {
 
             mBranchId = DataStoreUtils.getBranchId(requireActivity())
-            mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
-            if (mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()) {
+
+            if (mBranchId.isNullOrEmpty()) {
                 (getActivity() as MainActivity).showDialog()
                 return@setOnClickListener
             }
@@ -284,9 +283,9 @@ class FragmentLabelInventory :
         Handler(Looper.myLooper()!!).postDelayed({
 
             mBranchId = DataStoreUtils.getBranchId(requireContext())
-            mFBToken = DataStoreUtils.getFireBaseToken(requireContext())
 
-            if (mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()) {
+
+            if (mBranchId.isNullOrEmpty() ) {
                 (getActivity() as MainActivity).showDialog()
             } else {
                 if (!isSearching) {
@@ -353,7 +352,7 @@ class FragmentLabelInventory :
                 val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
-                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, mFBToken,BuildConfig.API_KEY , body)
+                val call: Call<APIResponse.Response> = apiService.postData(mBranchId, "",BuildConfig.API_KEY , body)
 
                 call.enqueue(object : Callback<APIResponse.Response?> {
                     override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
@@ -455,9 +454,9 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
-                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
+
+                if(mBranchId.isNullOrEmpty() ){
 
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
@@ -476,9 +475,9 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
-                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
+
+                if(mBranchId.isNullOrEmpty() ){
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
                     }
@@ -495,9 +494,8 @@ class FragmentLabelInventory :
         CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
-                mFBToken = DataStoreUtils.getFireBaseToken(requireActivity())
 
-                if(mBranchId.isNullOrEmpty() || mFBToken.isNullOrEmpty()){
+                if(mBranchId.isNullOrEmpty() ){
                     withContext(Dispatchers.Main){
                         Toast.makeText(requireContext(), "Please set Branch id.", Toast.LENGTH_SHORT).show()
                     }
@@ -524,7 +522,7 @@ class FragmentLabelInventory :
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
 
-            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, mFBToken, BuildConfig.API_KEY, jsonObject)
+            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, "", BuildConfig.API_KEY, jsonObject)
 
             call.enqueue(object : Callback<APIResponse.Response?> {
                 override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
@@ -567,7 +565,7 @@ class FragmentLabelInventory :
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
 
-            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, mFBToken, BuildConfig.API_KEY)
+            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, "", BuildConfig.API_KEY)
 
             call.enqueue(object : Callback<APIResponse.Response?> {
                 override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {

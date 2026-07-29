@@ -131,8 +131,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
         v.llBranchId.setOnClickListener {
             val brachId = DataStoreUtils.getBranchId(this)
-            val fbToken = DataStoreUtils.getFireBaseToken(this)
-            showAlertDialog(null, brachId, fbToken, null, null, false, false ,null)
+            showAlertDialog(null, brachId,  null, null, false, false ,null)
         }
 
         v.llSetBranchId.setOnClickListener {
@@ -145,7 +144,6 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         }
 
         val brachId = DataStoreUtils.getBranchId(this)
-        val fbToken = DataStoreUtils.getFireBaseToken(this)
         v.branchId.text = "Branch Id : " + brachId
     }
 
@@ -273,14 +271,12 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
     fun showSetBranchIdDialog(){
         val brachId = DataStoreUtils.getBranchId(this)
-        val fbToken = DataStoreUtils.getFireBaseToken(this)
 
-        showAlertDialog(   null, brachId , fbToken,
+        showAlertDialog(   null, brachId ,
             getString(R.string.yes), getString(R.string.no), false, true ,object : AlertDialogActionListener {
                 override fun action(isPositive: Boolean) {
                     try {
                         val brachId = DataStoreUtils.getBranchId(this@MainActivity)
-                        val fbToken = DataStoreUtils.getFireBaseToken(this@MainActivity)
                         v.branchId.text = "Branch Id : " + brachId
 
                     }catch (e : Exception){

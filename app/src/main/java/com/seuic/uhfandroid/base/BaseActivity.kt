@@ -24,8 +24,6 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.scottyab.rootbeer.RootBeer
 import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.R
@@ -50,9 +48,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     var ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE: Int = 2323
     private var developerOptionsObserver: DeveloperOptionsObserver? = null
 
-    private var firebaseToken: String = ""
-
-
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,14 +65,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         mContext = this
 
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                return@OnCompleteListener
-            }
-            firebaseToken = task.result
-            DataStoreUtils.setFireBaseToken(firebaseToken, this)
-            Log.i("UHF FB token:", firebaseToken)
-        })
+
 
         UFHDatabase.getDatabase(this)
 
@@ -220,7 +208,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     }
     private var alertDialogBuilder: AlertDialog.Builder? = null
 
-    protected fun showAlertDialog(alertTitle: String?, alertMessage: String?, fbToken: String?, positiveButtonTitle: String?,
+    protected fun showAlertDialog(alertTitle: String?, alertMessage: String?,  positiveButtonTitle: String?,
                                   negativeButtonTitle: String?,  isCancelable : Boolean?, isEditable : Boolean, actionListener: AlertDialogActionListener?) {
         try {
 
@@ -229,7 +217,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
             alertDialogBuilder = AlertDialog.Builder(this)
             val mTitle = promptView.findViewById<View>(R.id.title) as AppCompatTextView
             val mBranchIdText = promptView.findViewById<View>(R.id.branch_id_text) as AppCompatTextView
-            val mFbTokenText = promptView.findViewById<View>(R.id.fb_token_text) as AppCompatTextView
             var mBranchId = promptView.findViewById<View>(R.id.branch_id) as AppCompatEditText
             val mPositive = promptView.findViewById<View>(R.id.positive) as AppCompatButton
             val mNegative = promptView.findViewById<View>(R.id.negative) as AppCompatButton
@@ -238,7 +225,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
             mBranchId.setText(alertMessage ?: "Message")
             mPositive.text = positiveButtonTitle ?: "Ok"
             mNegative.text = negativeButtonTitle ?: "Cancel"
-            mFbTokenText.text = "FB Token: " + fbToken
 
             alertDialogBuilder!!.setView(promptView)
             val alertDialog = alertDialogBuilder!!.create()
@@ -264,7 +250,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
                 if(!mBranchId.text.toString().isNullOrEmpty()){
                     val branchId = mBranchId.text.toString().trim()
                     DataStoreUtils.setBranchId(branchId, this)
-                    DataStoreUtils.setFireBaseToken(firebaseToken, this)
 
                 }
                 actionListener?.action(true)

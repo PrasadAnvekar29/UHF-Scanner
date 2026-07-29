@@ -1,3 +1,4 @@
+/*
 package com.seuic.uhfandroid.firebase
 
 import android.app.ActivityManager
@@ -10,26 +11,17 @@ import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.bean.ApkVersion
 import com.seuic.uhfandroid.util.DataStoreUtils
 
 
-class FirebaseService() : FirebaseMessagingService() {
+class FirebaseService()  {
 
     private var NOTIFICATION_ID = 0
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage) {
 
-        Log.v("RemmoteMessageTo", remoteMessage.data.toString());
-
-        handleFirebaseDataNotification(remoteMessage)
-    }
 
     private fun handleFirebaseDataNotification(remoteMessage: RemoteMessage) {
         try {
@@ -178,4 +170,4 @@ class FirebaseService() : FirebaseMessagingService() {
         }
     }
 
-}
+}*/

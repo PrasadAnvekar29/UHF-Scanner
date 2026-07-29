@@ -4,8 +4,6 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -111,12 +109,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
+  //  implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
 
     // Add the dependency for the Crashlytics library
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-messaging")
+  //  implementation("com.google.firebase:firebase-crashlytics")
+  //  implementation("com.google.firebase:firebase-messaging")
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

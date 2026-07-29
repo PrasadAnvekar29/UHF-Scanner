@@ -68,13 +68,6 @@
         </receiver>
 
 
-        <service
-            android:name=".firebase.FirebaseService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <service
             android:name=".mqtt.MqttService"
