@@ -3,13 +3,17 @@ package com.seuic.uhfandroid
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import android.widget.TabHost
 import com.seuic.androidreader.bean.SearchParams
 import com.seuic.androidreader.bean.TagInfo
+import com.seuic.uhfandroid.database.LogEntry
+import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.mqtt.MqttService
 import com.seuic.uhfandroid.util.DataStoreUtils
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
 class App : Application() {
@@ -22,8 +26,42 @@ class App : Application() {
         super.onCreate()
         mContext=this
 
+        setupCrashLogger()
+
         if (DataStoreUtils.getMqttEnabled(this)) {
             MqttService.start(this)
+        }
+    }
+
+    /**
+     * Last-resort net: whatever crashes and wherever, this records the full
+     * stack trace to log_data_table before the process dies, then hands off
+     * to the previous default handler so normal crash behavior is unchanged.
+     * Room forbids DB access on the crashing thread when it's the main
+     * thread, so the insert runs on a throwaway thread that the handler
+     * waits on (with a timeout, in case the DB itself is what's broken).
+     */
+    private fun setupCrashLogger() {
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            try {
+                val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
+                val msg = "CRASH on thread '${thread.name}': ${Log.getStackTraceString(throwable)}"
+                val logThread = Thread {
+                    try {
+                        UFHDatabase.getDatabase(applicationContext)
+                            ?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
+                    } catch (e: Exception) {
+                        Log.e("CrashLogger", "Failed to persist crash log", e)
+                    }
+                }
+                logThread.start()
+                logThread.join(3000)
+            } catch (e: Exception) {
+                Log.e("CrashLogger", "Crash logger itself failed", e)
+            } finally {
+                defaultHandler?.uncaughtException(thread, throwable)
+            }
         }
     }
     var Constr_READ = "读"

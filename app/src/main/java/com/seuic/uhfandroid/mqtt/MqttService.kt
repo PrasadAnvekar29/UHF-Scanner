@@ -26,13 +26,19 @@ import com.seuic.uhfandroid.R
 class MqttService : Service() {
 
     override fun onCreate() {
-        super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-        } else {
-            startForeground(NOTIFICATION_ID, buildNotification())
+
+        try{
+            super.onCreate()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            } else {
+                startForeground(NOTIFICATION_ID, buildNotification())
+            }
+            MqttManager.connect(applicationContext)
+        }catch (e: Exception){
+
         }
-        MqttManager.connect(applicationContext)
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -42,7 +48,11 @@ class MqttService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        MqttManager.disconnect()
+        try{
+            MqttManager.disconnect()
+        }catch (e: Exception){
+
+        }
         super.onDestroy()
     }
 

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.JsonElement
@@ -138,6 +139,35 @@ object MqttManager {
         return branchId
     }
 
+    /**
+     * Publishes [payload] to "{branchId}/{topicSuffix}". Mirrors a REST API call so the
+     * broker sees the same data the backend receives; kept best-effort (no throw) since
+     * MQTT is a secondary channel and must never block/fail the caller's HTTP flow.
+     */
+    fun publish(context: Context, publishTopic: String, payload: String) {
+        try {
+            if (!DataStoreUtils.getMqttEnabled(context)){
+                return
+            }
+            val branchId = DataStoreUtils.getBranchId(context)
+            if (branchId.isNullOrEmpty()) return
+
+            val mqttClient = client
+            if (mqttClient == null || !mqttClient.isConnected) {
+                Toast.makeText(context,"MQTT not connected, dropping publish to $publishTopic", Toast.LENGTH_SHORT).show()
+                Log.w(TAG, "MQTT not connected, dropping publish to $publishTopic")
+                return
+            }
+
+            val topic = "$publishTopic"
+            val message = MqttMessage(payload.toByteArray()).apply { qos = QOS }
+            mqttClient.publish(topic, message)
+        } catch (e: MqttException) {
+            Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "Failed to publish to $publishTopic", e)
+        }
+    }
+
     private fun getOrCreateClientId(context: Context): String {
         var clientId = DataStoreUtils.getMqttClientId(context)
         if (clientId.isNullOrEmpty()) {
@@ -190,9 +220,9 @@ object MqttManager {
 
         notifyUser(appContext, "VRDDHII", "MQTT request $type")
 
-        if (!isAppInForeground(appContext)) {
+        /*if (!isAppInForeground(appContext)) {
             launchApplication(appContext)
-        }
+        }*/
     }
 
     private fun isAppInForeground(appContext: Context): Boolean {
@@ -215,22 +245,28 @@ object MqttManager {
     }
 
     private fun notifyUser(appContext: Context, title: String, body: String) {
-        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.vrddhii_png)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setSound(uri)
-            .setColor(ContextCompat.getColor(appContext, R.color.colorPrimary))
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setAutoCancel(true)
 
-        val notificationManager = appContext.getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH)
-            notificationManager.createNotificationChannel(channel)
+        try {
+            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                .setSmallIcon(R.drawable.vrddhii_png)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setSound(uri)
+                .setColor(ContextCompat.getColor(appContext, R.color.colorPrimary))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+
+            val notificationManager = appContext.getSystemService(NotificationManager::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH)
+                notificationManager.createNotificationChannel(channel)
+            }
+            notificationManager.notify(notificationIdCounter.incrementAndGet(), builder.build())
+        }catch (e: Exception){
+
         }
-        notificationManager.notify(notificationIdCounter.incrementAndGet(), builder.build())
+
     }
 
     fun disconnect() {
@@ -239,18 +275,24 @@ object MqttManager {
 
     @Synchronized
     private fun disconnectInternal() {
-        client?.let {
-            try {
-                if (it.isConnected) {
-                    it.disconnect()
+
+        try{
+            client?.let {
+                try {
+                    if (it.isConnected) {
+                        it.disconnect()
+                    }
+                    it.close()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error closing MQTT client", e)
                 }
-                it.close()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error closing MQTT client", e)
             }
+            client = null
+            connectedBrokerUrl = null
+            connectedTopic = null
+        }catch (e : Exception){
+
         }
-        client = null
-        connectedBrokerUrl = null
-        connectedTopic = null
+
     }
 }

@@ -8,7 +8,7 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [TagDataEntry::class, LogEntry::class], version = 2, exportSchema = false)
+@Database(entities = [TagDataEntry::class, LogEntry::class], version = 1, exportSchema = false)
 abstract class UFHDatabase : RoomDatabase() {
 
 

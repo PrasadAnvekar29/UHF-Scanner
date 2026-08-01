@@ -13,7 +13,8 @@ class TagDataEntry(
     @field:ColumnInfo(name = "epcId") @field:SerializedName("epcId") var epcId: String,
     @field:ColumnInfo(name = "antenna") @field:SerializedName("antenna") var antenna: String,
     @field:ColumnInfo(name = "additionalData") @field:SerializedName("additionalData") var additionalData: String,
-    @field:ColumnInfo(name = "date_time") @field:SerializedName("date_time") var date_time: String
+    @field:ColumnInfo(name = "date_time") @field:SerializedName("date_time") var date_time: String,
+    @field:ColumnInfo(name = "branchid") @field:SerializedName("branchid") var branchid: String
 ) {
     @Transient
     @PrimaryKey(autoGenerate = true)

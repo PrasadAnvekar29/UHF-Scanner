@@ -64,9 +64,9 @@ android {
             buildConfigField("String", "API_KEY", "\"aP9xH3mK7nR4T8vB2jF6Q1sW5yE9uL0zC4rM8pV2tX7wS3dG\"")
             //Prod
          //   buildConfigField("String", "BASE_URL", "\"https://swarnamayilrfid.chola.murugappa.com/\"")
-
+            buildConfigField("String", "BASE_URL", "\"http://10.120.5.90:6060/\"")
             //Uat
-            buildConfigField("String", "BASE_URL", "\"https://readerprocess-uat.chola.murugappa.com/\"")
+        //    buildConfigField("String", "BASE_URL", "\"https://readerprocess-uat.chola.murugappa.com/\"")
          //   buildConfigField("String", "BASE_URL", "\"https://ukcorp.net/cholanweb/\"")
             signingConfig signingConfigs.release
         }

@@ -124,7 +124,7 @@ open class  BaseApiResponse {
                 return "Server has encountered with internal error (502)."
             }
 
-            if (response is HttpException ) {
+            /*if (response is HttpException ) {
                 val jObjError = JSONObject(response.response()!!.errorBody()!!.string())
                 if(jObjError.has("error") && !jObjError.getString("error").isNullOrEmpty())
                     return jObjError.getString("error")
@@ -133,6 +133,16 @@ open class  BaseApiResponse {
                     return jObjError.getString("message")
 
                 return response.response()!!.message()
+            }*/
+
+            return when (response) {
+                is HttpException -> {
+                    response.response()?.errorBody()?.string()
+                        ?: response.message()
+                }
+                else -> {
+                    response.message ?: "Unknown error occurred"
+                }
             }
         }catch (e : Exception){
 

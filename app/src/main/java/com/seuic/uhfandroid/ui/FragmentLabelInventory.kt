@@ -30,6 +30,7 @@ import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.database.TagDataEntry
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.databinding.FragmentLabelInventoryBinding
+import com.seuic.uhfandroid.mqtt.MqttManager
 import com.seuic.uhfandroid.ext.clearTagList
 import com.seuic.uhfandroid.ext.currentTag
 import com.seuic.uhfandroid.ext.isSearching
@@ -46,6 +47,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -77,8 +80,12 @@ class FragmentLabelInventory :
 
     private var timerJob: Job? = null
 
+    // Cancelled in onDestroy so background loops stop touching the fragment
+    // once it's detached, instead of crashing on requireContext()/requireActivity().
+    private val fragmentScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     fun startTimer() {
-        timerJob = CoroutineScope(Dispatchers.Default).launch {
+        timerJob = fragmentScope.launch(Dispatchers.Default) {
             while (isActive) {
 
 
@@ -181,7 +188,7 @@ class FragmentLabelInventory :
             clearTagList.postValue(true)
             resetCurrentTag.postValue(true)*/
 
-            CoroutineScope(Dispatchers.IO).launch {
+            fragmentScope.launch {
                 mDataBase?.tagDataDao()?.deleteAll()
                 mDataBase?.tagDataDao()?.truncateAll()
 
@@ -272,6 +279,7 @@ class FragmentLabelInventory :
         timerJob?.cancel()
      //   handler2.removeCallbacks(runnable)
         vm.unregisterListener()
+        fragmentScope.cancel()
     }
 
 
@@ -281,6 +289,7 @@ class FragmentLabelInventory :
 
 
         Handler(Looper.myLooper()!!).postDelayed({
+            if (!isAdded) return@postDelayed
 
             mBranchId = DataStoreUtils.getBranchId(requireContext())
 
@@ -331,9 +340,11 @@ class FragmentLabelInventory :
 
 
 
-        CoroutineScope(IO).launch {
+        fragmentScope.launch {
+          try {
+            if (!isAdded) return@launch
 
-         //   addToDatabase(vm.listTagData)
+           // addToDatabase()
 
 
             var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
@@ -346,7 +357,15 @@ class FragmentLabelInventory :
                 Log.v("Prasad","2")
          //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-                val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
+                val payloadJson = DataStoreUtils.getGson().toJson(listNeedtoUpload).toString()
+                val body: RequestBody = RequestBody.create(JSON, payloadJson)
+
+                try {
+                    MqttManager.publish(requireContext(), "raw_logs", payloadJson)
+
+                }catch (e: Exception){
+
+                }
 
 
                 val apiService: ApiInterface = ApiClient.getClient()
@@ -383,7 +402,7 @@ class FragmentLabelInventory :
                                 val  msg: String = b.safeErrorResponse(response)
                                 Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
                                 errorCount++
-                                CoroutineScope(IO).launch {
+                                fragmentScope.launch {
                                     mDataBase?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
 
                                 }
@@ -401,7 +420,7 @@ class FragmentLabelInventory :
                             val b = BaseApiResponse()
                             val  msg: String = b.safeErrorResponse(t)
                             Toast.makeText(requireContext(), msg , Toast.LENGTH_SHORT).show()
-                            CoroutineScope(IO).launch {
+                            fragmentScope.launch {
                                 mDataBase?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
                             }
                             restartApp(requireContext())
@@ -412,27 +431,30 @@ class FragmentLabelInventory :
                 })
 
             }
+          } catch (e: Exception) {
+              mDataBase?.logDao()?.insert(LogEntry(Log.getStackTraceString(e), formatter.format(Date())))
+          }
         }
 
     }
 
 
-     fun addToDatabase(list : MutableList<TagBean>?){
+     fun addToDatabase(){
 
     //    mDataBase?.tagDataDao()?.insert(map(list))
 
-       /* CoroutineScope(IO).launch {
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1","1",""))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2","1",""))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1","1",""))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2","1",""))
-            mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1","1",""))
-        }*/
+        fragmentScope.launch {
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","1","1","","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("1","2","1","","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","1","1","","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("2","2","1","","1"))
+            mDataBase?.tagDataDao()?.insert1(TagDataEntry("3","1","1","","1"))
+        }
 
     }
 
     fun removerFromDatabase(list : List<APIResponse.Tag>){
-        CoroutineScope(IO).launch {
+        fragmentScope.launch {
             for(i in list){
                    mDataBase?.tagDataDao()?.deleteData(i.epcId, i.antenna)
             }
@@ -444,15 +466,15 @@ class FragmentLabelInventory :
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna, i.antenna, ""))
+            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna, i.antenna, "", mBranchId!!))
         }
 
         return tagDataEntry
     }
 
     fun startPostTask() {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (isActive) {
+        fragmentScope.launch {
+            while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
 
 
@@ -472,8 +494,8 @@ class FragmentLabelInventory :
 
 
     fun startHeartBeatTask() {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (isActive) {
+        fragmentScope.launch {
+            while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
 
 
@@ -491,8 +513,8 @@ class FragmentLabelInventory :
     }
 
     fun startHardwareBeatTask() {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (isActive) {
+        fragmentScope.launch {
+            while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
 
                 if(mBranchId.isNullOrEmpty() ){
@@ -510,7 +532,7 @@ class FragmentLabelInventory :
     fun callHeartBeatNetworkAPI() {
 
 
-        CoroutineScope(IO).launch {
+        fragmentScope.launch {
             val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
          //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
@@ -518,6 +540,7 @@ class FragmentLabelInventory :
             jsonObject.addProperty("branchCode", mBranchId)
             jsonObject.addProperty("time", formatter.format(Date()))
 
+         //   MqttManager.publish(requireContext(), "heartbeat", jsonObject.toString())
 
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
@@ -557,10 +580,15 @@ class FragmentLabelInventory :
     fun callHardwareNetworkAPI() {
 
 
-        CoroutineScope(IO).launch {
+        fragmentScope.launch {
             val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
             //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("branchCode", mBranchId)
+            jsonObject.addProperty("time", formatter.format(Date()))
+
+       //     MqttManager.publish(requireContext(), "hardware", jsonObject.toString())
 
             val apiService: ApiInterface = ApiClient.getClient()
                 .create(ApiInterface::class.java)
@@ -634,7 +662,7 @@ class FragmentLabelInventory :
 
     fun detele3DaysLogsData(){
 
-        CoroutineScope(IO).launch {
+        fragmentScope.launch {
 
             try {
                 if(mDataBase == null){
@@ -652,7 +680,7 @@ class FragmentLabelInventory :
 
 
     fun startReader() {
-        CoroutineScope(Dispatchers.Main).launch {
+        fragmentScope.launch(Dispatchers.Main) {
             if (!isSearching) {
                 delay(3_000) // 3 seconds
                 v.btnSearchForCard.performClick()
@@ -663,7 +691,7 @@ class FragmentLabelInventory :
     }
 
     fun stopReader() {
-        CoroutineScope(Dispatchers.Main).launch {
+        fragmentScope.launch(Dispatchers.Main) {
             if (isSearching) {
                 delay(3_000) // 3 seconds
                 v.btnStopSearchForCard.performClick()

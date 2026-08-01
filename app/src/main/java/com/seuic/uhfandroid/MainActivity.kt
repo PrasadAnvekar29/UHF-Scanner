@@ -381,13 +381,13 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                 val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
                 if(apkVersion != null && !TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
                     updateAPk(apkVersion)
-                } else {
+                } /*else {
                     if(DataStoreUtils.getRequestType(applicationContext).equals("START", true)){
                         fragmentWriteReadDeviceConnect.startReader()
                     } else {
                         fragmentWriteReadDeviceConnect.stopReader()
                     }
-                }
+                }*/
             }
         }
     }

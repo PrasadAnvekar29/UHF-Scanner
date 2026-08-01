@@ -19,6 +19,7 @@ import com.seuic.uhfandroid.ext.inventoryListDatas
 import com.seuic.uhfandroid.ext.totalCounts
 import java.util.*
 import androidx.lifecycle.Observer
+import com.seuic.uhfandroid.util.DataStoreUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +35,7 @@ class ViewModelLabelInventory : BaseViewModel() {
     var listTagData = Vector<TagDataEntry>()
 
     private var mDataBase : UFHDatabase? = null
+    private var mBranchId : String = ""
     private var mContext : Context? = null
 
 
@@ -133,7 +135,12 @@ class ViewModelLabelInventory : BaseViewModel() {
                     mDataBase = UFHDatabase.getDatabase(mContext!!)
                 }
 
-                mDataBase?.tagDataDao()?.insert(map(tags, timeStamp))
+                if(mBranchId.isNullOrEmpty()){
+                    mBranchId = DataStoreUtils.getBranchId(mContext)
+                }
+
+
+                mDataBase?.tagDataDao()?.insert(map(tags, timeStamp, mBranchId))
 
             }catch (e : Exception){
 
@@ -209,11 +216,11 @@ class ViewModelLabelInventory : BaseViewModel() {
         return result
     }
 
-    fun map(list : List<TagInfo>, timeStamp: String) : List<TagDataEntry>{
+    fun map(list : List<TagInfo>, timeStamp: String, branchId : String) : List<TagDataEntry>{
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr(),i.getAntennaIDStr(), timeStamp))
+            tagDataEntry.add(TagDataEntry(i.getEpcStr(), i.getAntennaIDStr(),i.getAntennaIDStr(), timeStamp, branchId))
         }
 
         return tagDataEntry
