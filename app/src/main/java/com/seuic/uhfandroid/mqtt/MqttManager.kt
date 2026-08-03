@@ -144,27 +144,45 @@ object MqttManager {
      * broker sees the same data the backend receives; kept best-effort (no throw) since
      * MQTT is a secondary channel and must never block/fail the caller's HTTP flow.
      */
-    fun publish(context: Context, publishTopic: String, payload: String) {
+    fun publish(context: Context, publishTopic: String, payload: String
+                , onResult: ((success: Boolean, error: Throwable?) -> Unit)? = null
+    ) {
         try {
-            if (!DataStoreUtils.getMqttEnabled(context)){
+            if (!DataStoreUtils.getMqttEnabled(context)) {
+                onResult?.invoke(false, IllegalStateException("MQTT disabled"))
                 return
             }
             val branchId = DataStoreUtils.getBranchId(context)
-            if (branchId.isNullOrEmpty()) return
+            if (branchId.isNullOrEmpty()) {
+                onResult?.invoke(false, IllegalStateException("Branch id missing"))
+                return
+            }
 
             val mqttClient = client
             if (mqttClient == null || !mqttClient.isConnected) {
                 Toast.makeText(context,"MQTT not connected, dropping publish to $publishTopic", Toast.LENGTH_SHORT).show()
                 Log.w(TAG, "MQTT not connected, dropping publish to $publishTopic")
+                onResult?.invoke(false, IllegalStateException("MQTT not connected"))
                 return
             }
 
             val topic = "$publishTopic"
             val message = MqttMessage(payload.toByteArray()).apply { qos = QOS }
-            mqttClient.publish(topic, message)
+            mqttClient.publish(topic, message, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    Log.d(TAG, "Published to $topic successfully")
+                    onResult?.invoke(true, null)
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    Log.e(TAG, "Failed to publish to $topic", exception)
+                    onResult?.invoke(false, exception)
+                }
+            })
         } catch (e: MqttException) {
             Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
             Log.e(TAG, "Failed to publish to $publishTopic", e)
+            onResult?.invoke(false, e)
         }
     }
 

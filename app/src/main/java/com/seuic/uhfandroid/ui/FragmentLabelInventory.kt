@@ -361,7 +361,13 @@ class FragmentLabelInventory :
                 val body: RequestBody = RequestBody.create(JSON, payloadJson)
 
                 try {
-                    MqttManager.publish(requireContext(), "raw_logs", payloadJson)
+                    MqttManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
+                        if (success) {
+                            Log.v("Prasad", "MQTT raw_logs publish succeeded")
+                        } else {
+                            Log.w("Prasad", "MQTT raw_logs publish failed", error)
+                        }
+                    }
 
                 }catch (e: Exception){
 
