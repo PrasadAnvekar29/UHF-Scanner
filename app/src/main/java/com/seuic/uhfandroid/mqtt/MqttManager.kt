@@ -144,6 +144,15 @@ object MqttManager {
      * broker sees the same data the backend receives; kept best-effort (no throw) since
      * MQTT is a secondary channel and must never block/fail the caller's HTTP flow.
      */
+
+    fun isConnected(context: Context){
+        val mqttClient = client
+        if (mqttClient == null || !mqttClient.isConnected) {
+            connect(context)
+        }
+    }
+
+
     fun publish(context: Context, publishTopic: String, payload: String
                 , onResult: ((success: Boolean, error: Throwable?) -> Unit)? = null
     ) {

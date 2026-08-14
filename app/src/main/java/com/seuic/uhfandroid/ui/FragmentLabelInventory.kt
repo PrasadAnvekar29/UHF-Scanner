@@ -350,6 +350,7 @@ class FragmentLabelInventory :
             var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
+            MqttManager.isConnected(requireContext())
 
 
             Log.v("Prasad", "1")
@@ -363,9 +364,9 @@ class FragmentLabelInventory :
                 try {
                     MqttManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
                         if (success) {
-                            Log.v("Prasad", "MQTT raw_logs publish succeeded")
+                            Toast.makeText(requireContext(), "MQTT raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
                         } else {
-                            Log.w("Prasad", "MQTT raw_logs publish failed", error)
+                            Toast.makeText(requireContext(), "Failed "+error!!.message , Toast.LENGTH_SHORT).show()
                         }
                     }
 
