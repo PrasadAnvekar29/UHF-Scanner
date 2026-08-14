@@ -33,6 +33,7 @@ import com.seuic.uhfandroid.databinding.ActivityMainBinding
 import com.seuic.uhfandroid.ext.connectResult
 import com.seuic.uhfandroid.ext.isSearching
 import com.seuic.uhfandroid.mqtt.MqttService
+import com.seuic.uhfandroid.socketio.SocketIoService
 import com.seuic.uhfandroid.ui.FragmentLabelInventory
 import com.seuic.uhfandroid.ui.FragmentParameterSetting
 import com.seuic.uhfandroid.ui.FragmentReadAndWrite
@@ -141,6 +142,10 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
         v.llMqttSettings.setOnClickListener {
             showMqttSettingsDialog()
+        }
+
+        v.llSocketioSettings.setOnClickListener {
+            showSocketIoSettingsDialog()
         }
 
         val brachId = DataStoreUtils.getBranchId(this)
@@ -330,6 +335,48 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         } catch (e: Exception) {
             Log.e(TAG, "Failed to show MQTT settings dialog", e)
+        }
+    }
+
+    private fun showSocketIoSettingsDialog() {
+        try {
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val promptView = inflater.inflate(R.layout.dialog_socketio, null)
+
+            val enabledSwitch = promptView.findViewById<SwitchCompat>(R.id.socketio_enabled)
+            val serverUrlEdit = promptView.findViewById<AppCompatEditText>(R.id.socketio_server_url)
+            val usernameEdit = promptView.findViewById<AppCompatEditText>(R.id.socketio_username)
+            val passwordEdit = promptView.findViewById<AppCompatEditText>(R.id.socketio_password)
+            val positiveButton = promptView.findViewById<AppCompatButton>(R.id.positive)
+            val negativeButton = promptView.findViewById<AppCompatButton>(R.id.negative)
+
+            enabledSwitch.isChecked = DataStoreUtils.getSocketIoEnabled(this)
+            serverUrlEdit.setText(DataStoreUtils.getSocketIoServerUrl(this))
+            usernameEdit.setText(DataStoreUtils.getSocketIoUsername(this))
+            passwordEdit.setText(DataStoreUtils.getSocketIoPassword(this))
+
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(this).setView(promptView).create()
+
+            positiveButton.setOnClickListener {
+                val enabled = enabledSwitch.isChecked
+                DataStoreUtils.setSocketIoEnabled(enabled, this)
+                DataStoreUtils.setSocketIoServerUrl(serverUrlEdit.text.toString().trim(), this)
+                DataStoreUtils.setSocketIoUsername(usernameEdit.text.toString().trim(), this)
+                DataStoreUtils.setSocketIoPassword(passwordEdit.text.toString(), this)
+
+                SocketIoService.stop(this)
+                if (enabled) {
+                    SocketIoService.start(this)
+                }
+
+                dialog.dismiss()
+            }
+            negativeButton.setOnClickListener { dialog.dismiss() }
+
+            dialog.show()
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to show Socket.IO settings dialog", e)
         }
     }
 

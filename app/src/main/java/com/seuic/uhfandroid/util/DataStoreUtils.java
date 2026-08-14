@@ -75,6 +75,11 @@ public class DataStoreUtils {
     public static final String MQTT_PASSWORD = "mqtt_password";
     public static final String MQTT_CLIENT_ID = "mqtt_client_id";
 
+    public static final String SOCKETIO_ENABLED = "socketio_enabled";
+    public static final String SOCKETIO_SERVER_URL = "socketio_server_url";
+    public static final String SOCKETIO_USERNAME = "socketio_username";
+    public static final String SOCKETIO_PASSWORD = "socketio_password";
+
 
     private DataStoreUtils(Context context) {
         this.context = context;
@@ -672,6 +677,43 @@ public class DataStoreUtils {
             return "";
         }
         return getChacheData(context, MQTT_CLIENT_ID, MQTT_CLIENT_ID);
+    }
+
+    public static void setSocketIoEnabled(boolean enabled, Context context) {
+        setChacheData(context, SOCKETIO_ENABLED, SOCKETIO_ENABLED, Boolean.toString(enabled));
+    }
+    public static boolean getSocketIoEnabled(Context context) {
+        return Boolean.parseBoolean(getChacheData(context, SOCKETIO_ENABLED, SOCKETIO_ENABLED));
+    }
+
+    public static void setSocketIoServerUrl(String serverUrl, Context context) {
+        setChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL, serverUrl);
+    }
+    public static String getSocketIoServerUrl(Context context) {
+        if(TextUtils.isEmpty(getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL))){
+            return "http://192.168.1.125:3000";
+        }
+        return getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL);
+    }
+
+    public static void setSocketIoUsername(String username, Context context) {
+        setChacheData(context, SOCKETIO_USERNAME, SOCKETIO_USERNAME, username);
+    }
+    public static String getSocketIoUsername(Context context) {
+        if(TextUtils.isEmpty(getChacheData(context, SOCKETIO_USERNAME, SOCKETIO_USERNAME))){
+            return "";
+        }
+        return getChacheData(context, SOCKETIO_USERNAME, SOCKETIO_USERNAME);
+    }
+
+    public static void setSocketIoPassword(String password, Context context) {
+        setChacheData(context, SOCKETIO_PASSWORD, SOCKETIO_PASSWORD, password);
+    }
+    public static String getSocketIoPassword(Context context) {
+        if(TextUtils.isEmpty(getChacheData(context, SOCKETIO_PASSWORD, SOCKETIO_PASSWORD))){
+            return "";
+        }
+        return getChacheData(context, SOCKETIO_PASSWORD, SOCKETIO_PASSWORD);
     }
 
 }

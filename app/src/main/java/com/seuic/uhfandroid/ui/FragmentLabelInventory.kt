@@ -31,6 +31,7 @@ import com.seuic.uhfandroid.database.TagDataEntry
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.databinding.FragmentLabelInventoryBinding
 import com.seuic.uhfandroid.mqtt.MqttManager
+import com.seuic.uhfandroid.socketio.SocketIoManager
 import com.seuic.uhfandroid.ext.clearTagList
 import com.seuic.uhfandroid.ext.currentTag
 import com.seuic.uhfandroid.ext.isSearching
@@ -351,6 +352,7 @@ class FragmentLabelInventory :
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
             MqttManager.isConnected(requireContext())
+            SocketIoManager.isConnected(requireContext())
 
 
             Log.v("Prasad", "1")
@@ -367,6 +369,19 @@ class FragmentLabelInventory :
                             Toast.makeText(requireContext(), "MQTT raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(requireContext(), "Failed "+error!!.message , Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }catch (e: Exception){
+
+                }
+
+                try {
+                    SocketIoManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
+                        if (success) {
+                            Toast.makeText(requireContext(), "Socket.IO raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Socket.IO raw_logs publish Failed "+error!!.message , Toast.LENGTH_SHORT).show()
                         }
                     }
 
