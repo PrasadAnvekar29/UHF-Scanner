@@ -90,10 +90,10 @@ object SocketIoManager {
             ioSocket.on(Socket.EVENT_CONNECT_ERROR) { args ->
                 Log.e(TAG, "Socket.IO connect error: ${args.firstOrNull()}")
             }
-            ioSocket.on("command") { args ->
+            ioSocket.on(event) { args ->
                 val payload = args.firstOrNull()?.toString().orEmpty()
                 try {
-                    handleCommandMessage(context.applicationContext, JsonParser.parseString(payload), branchId)
+                    handleCommandMessage(context.applicationContext, JsonParser.parseString(payload))
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to handle Socket.IO message on $event: $payload", e)
                 }
@@ -163,24 +163,20 @@ object SocketIoManager {
         }
     }
 
-    private fun handleCommandMessage(appContext: Context, value: JsonElement, branchId: String) {
+    private fun handleCommandMessage(appContext: Context, value: JsonElement) {
         try {
             var requestType: String
             var apkVersion: String? = null
             var apkUrl: String? = null
-            var id: String? = ""
 
             if (value.isJsonObject) {
                 val json = value.asJsonObject
                 requestType = json.get("reader_request_type")?.asString ?: return
                 apkVersion = json.get("apk_version")?.asString
                 apkUrl = json.get("apk_url")?.asString
-                id = json.get("branch_id")?.asString
             } else {
                 requestType = value.asString.trim()
             }
-
-            if (!id.equals(branchId)) return
 
             if (requestType.isEmpty()) return
 

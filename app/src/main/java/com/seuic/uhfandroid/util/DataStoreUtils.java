@@ -691,7 +691,7 @@ public class DataStoreUtils {
     }
     public static String getSocketIoServerUrl(Context context) {
         if(TextUtils.isEmpty(getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL))){
-            return "http://192.168.1.125:3000";
+            return "https://readerprocess-uat.chola.murugappa.com";
         }
         return getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL);
     }
