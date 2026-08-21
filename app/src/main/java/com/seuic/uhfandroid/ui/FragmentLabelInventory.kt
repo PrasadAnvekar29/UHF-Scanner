@@ -380,17 +380,30 @@ class FragmentLabelInventory :
                     SocketIoManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
                         if (success) {
                             Toast.makeText(requireContext(), "Socket.IO raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
+                            errorCount = 0;
+                            removerFromDatabase(listNeedtoUpload)
                         } else {
                             Toast.makeText(requireContext(), "Socket.IO raw_logs publish Failed "+error!!.message , Toast.LENGTH_SHORT).show()
+                            errorCount++
+                            fragmentScope.launch {
+                                mDataBase?.logDao()?.insert(LogEntry(error.message!!, formatter.format(Date())))
+
+                            }
+                            restartApp(requireContext())
                         }
                     }
 
                 }catch (e: Exception){
+                    errorCount++
+                    fragmentScope.launch {
+                        mDataBase?.logDao()?.insert(LogEntry(e.message!!, formatter.format(Date())))
 
+                    }
+                    restartApp(requireContext())
                 }
 
 
-                val apiService: ApiInterface = ApiClient.getClient()
+                /*val apiService: ApiInterface = ApiClient.getClient()
                     .create(ApiInterface::class.java)
 
                 val call: Call<APIResponse.Response> = apiService.postData(mBranchId, "",BuildConfig.API_KEY , body)
@@ -412,13 +425,13 @@ class FragmentLabelInventory :
 
                                 }
 
-                                /*if(!response.body()!!.data.isNullOrEmpty()){
+                                *//*if(!response.body()!!.data.isNullOrEmpty()){
                                     removerFromDatabase(response.body()!!.data!!)
-                                }*/
+                                }*//*
 
-                               /* vm.listTagData.clear()
+                               *//* vm.listTagData.clear()
                                 adapter.data.clear()
-                                adapter.notifyDataSetChanged()*/
+                                adapter.notifyDataSetChanged()*//*
                             } else {
                                 val b = BaseApiResponse()
                                 val  msg: String = b.safeErrorResponse(response)
@@ -450,7 +463,7 @@ class FragmentLabelInventory :
                         } catch (e: Exception) {
                         }
                     }
-                })
+                })*/
 
             }
           } catch (e: Exception) {
@@ -475,10 +488,18 @@ class FragmentLabelInventory :
 
     }
 
-    fun removerFromDatabase(list : List<APIResponse.Tag>){
+   /* fun removerFromDatabase(list : List<APIResponse.Tag>){
         fragmentScope.launch {
             for(i in list){
                    mDataBase?.tagDataDao()?.deleteData(i.epcId, i.antenna)
+            }
+        }
+    }*/
+
+    fun removerFromDatabase(list : List<TagDataEntry>){
+        fragmentScope.launch {
+            for(i in list){
+                mDataBase?.tagDataDao()?.deleteData(i.epcId, i.antenna)
             }
         }
     }
