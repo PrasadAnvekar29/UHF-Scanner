@@ -320,7 +320,7 @@ class FragmentLabelInventory :
 
             detele3DaysLogsData()
          //   addToDatabase(null)
-        }, 10000)
+        }, 5000)
 
     }
 
@@ -619,9 +619,12 @@ class FragmentLabelInventory :
 
 
                     SocketIoManager.publish(requireContext(), "error_logs", payloadJson) { success, error ->
+
+                        if (success) {
+                            removeErrorFromDatabase(listNeedtoUpload)
+                        }
                         fragmentScope.launch(Dispatchers.Main) {
                             if (success) {
-                                removeErrorFromDatabase(listNeedtoUpload)
                                 Toast.makeText(requireContext(), "error_logs publish succeeded" , Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(requireContext(), "error_logs publish Failed "+error?.message , Toast.LENGTH_SHORT).show()
