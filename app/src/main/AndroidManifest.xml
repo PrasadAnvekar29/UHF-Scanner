@@ -68,6 +68,15 @@
         </receiver>
 
 
+        <receiver
+            android:name=".ApkInstallReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
 
         <service
             android:name=".mqtt.MqttService"

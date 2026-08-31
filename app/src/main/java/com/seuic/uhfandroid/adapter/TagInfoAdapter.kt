@@ -16,7 +16,7 @@ class TagInfoAdapter(layoutResId: Int) : BaseQuickAdapter<TagDataEntry, BaseView
         holder.apply {
             val pos = adapterPosition + 1
             setText(R.id.tv_serial_number, pos.toString())
-            setText(R.id.tv_epc, item.epcId)
+            setText(R.id.tv_epc, item.rfid)
             setText(R.id.tv_rssi, "")
             setText(R.id.tv_times, "")
             setText(R.id.tv_reader_antenna, item.antenna)

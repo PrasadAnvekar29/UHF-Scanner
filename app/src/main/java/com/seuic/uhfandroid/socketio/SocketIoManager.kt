@@ -147,7 +147,7 @@ object SocketIoManager {
 
             val ioSocket = socket
             if (ioSocket == null || !ioSocket.connected()) {
-                Toast.makeText(context, "Socket.IO not connected, dropping publish to $publishEvent", Toast.LENGTH_SHORT).show()
+             //   Toast.makeText(context, "Socket.IO not connected, dropping publish to $publishEvent", Toast.LENGTH_SHORT).show()
                 Log.w(TAG, "Socket.IO not connected, dropping publish to $publishEvent")
                 onResult?.invoke(false, IllegalStateException("Socket.IO not connected"))
                 return
@@ -157,7 +157,7 @@ object SocketIoManager {
             Log.d(TAG, "Emitted $publishEvent successfully")
             onResult?.invoke(true, null)
         } catch (e: Exception) {
-            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             Log.e(TAG, "Failed to emit $publishEvent", e)
             onResult?.invoke(false, e)
         }

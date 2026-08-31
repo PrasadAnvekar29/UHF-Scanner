@@ -3,7 +3,7 @@ package com.seuic.uhfandroid.bean
 import java.io.Serializable
 
 data class TagBean(
-    var epcId:String,
+    var rfid:String,
     var rssi:Int,
     var times:Int,
     var antenna:String,//天线

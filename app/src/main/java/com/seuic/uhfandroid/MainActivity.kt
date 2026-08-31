@@ -420,6 +420,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
             "UPDATE" ->{
                 val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
                 if(apkVersion != null && !TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                    fragmentWriteReadDeviceConnect.stopReader()
                     updateAPk(apkVersion)
                 }
             }
@@ -427,6 +428,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
 
                 val apkVersion = DataStoreUtils.getApkVersion(applicationContext)
                 if(apkVersion != null && !TextUtils.isEmpty(apkVersion.apkVersion) && !apkVersion.apkVersion.equals(Utility.getVersion(applicationContext)))    {
+                    fragmentWriteReadDeviceConnect.stopReader()
                     updateAPk(apkVersion)
                 } /*else {
                     if(DataStoreUtils.getRequestType(applicationContext).equals("START", true)){
@@ -440,7 +442,7 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
     }
 
     fun updateAPk(apkVersion : ApkVersion){
-        AlertDialog.Builder(this)
+        /*AlertDialog.Builder(this)
             .setTitle("Warning")
             .setMessage("Updated Version of App is available. Update your apk first")
             .setCancelable(false)
@@ -452,7 +454,13 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                         newApkPath(resultState)
                     })
             }
-            .show()
+            .show()*/
+
+        vm.showLoading("Please wait...", this)
+        vm.downloadApk(apkVersion.apkUrl!!, this)
+            .observe(this, { resultState: String ->
+                newApkPath(resultState)
+            })
     }
 
 

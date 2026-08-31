@@ -41,7 +41,7 @@ class FragmentReadAndWrite :
             mAdapter.setPosition(position)
             mAdapter.notifyDataSetChanged()
             val tag = adapter.data[position] as TagBean
-            currentTag = tag.epcId
+            currentTag = tag.rfid
             vm.currentAntenna = tag.antenna.toInt()
         }
 

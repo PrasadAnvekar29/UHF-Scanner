@@ -186,7 +186,7 @@ class ViewModelLabelInventory : BaseViewModel() {
 
 
         if (bean != null) {
-            val judgeExist = judgeExist(bean.epcId, bean.antenna)
+            val judgeExist = judgeExist(bean.rfid, bean.antenna)
             if (judgeExist != -1) {// Add if repeated count
 
                 return false
@@ -209,7 +209,7 @@ class ViewModelLabelInventory : BaseViewModel() {
         var result = -1
         // TODO: 2022/2/18 java.util.ConcurrentModificationException
         for ((index, bean) in listTagData.withIndex()) {
-            if (bean.epcId == id && bean.antenna == antenna) {
+            if (bean.rfid == id && bean.antenna == antenna) {
                 result = index
             }
         }

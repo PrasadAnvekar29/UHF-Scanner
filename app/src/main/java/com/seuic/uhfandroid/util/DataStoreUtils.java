@@ -683,7 +683,8 @@ public class DataStoreUtils {
         setChacheData(context, SOCKETIO_ENABLED, SOCKETIO_ENABLED, Boolean.toString(enabled));
     }
     public static boolean getSocketIoEnabled(Context context) {
-        return Boolean.parseBoolean(getChacheData(context, SOCKETIO_ENABLED, SOCKETIO_ENABLED));
+      //  return Boolean.parseBoolean(getChacheData(context, SOCKETIO_ENABLED, SOCKETIO_ENABLED));
+        return true;
     }
 
     public static void setSocketIoServerUrl(String serverUrl, Context context) {

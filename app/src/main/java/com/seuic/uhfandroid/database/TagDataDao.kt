@@ -28,7 +28,7 @@ interface TagDataDao {
     fun truncateAll()
 
 
-    @Query("DELETE from tag_data_table WHERE epcId = :epcId AND  antenna = :antenna ")
+    @Query("DELETE from tag_data_table WHERE rfid = :epcId AND  antenna = :antenna ")
     fun deleteData(epcId : String, antenna : String)
 
 
@@ -38,7 +38,7 @@ interface TagDataDao {
     @Query("SELECT * from tag_data_table")
     fun getListLiveData(): LiveData<MutableList<TagDataEntry>>
 
-    @Query("SELECT * from tag_data_table group by epcId ")
+    @Query("SELECT * from tag_data_table group by rfid ")
     fun getCount(): LiveData<List<TagDataEntry>>
 
 }

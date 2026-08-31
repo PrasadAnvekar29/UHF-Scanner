@@ -361,9 +361,9 @@ class FragmentLabelInventory :
          //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val payloadJson = DataStoreUtils.getGson().toJson(listNeedtoUpload).toString()
-                val body: RequestBody = RequestBody.create(JSON, payloadJson)
+            //    val body: RequestBody = RequestBody.create(JSON, payloadJson)
 
-                try {
+              /*  try {
                     MqttManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
                         if (success) {
                             Toast.makeText(requireContext(), "MQTT raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
@@ -374,19 +374,19 @@ class FragmentLabelInventory :
 
                 }catch (e: Exception){
 
-                }
+                }*/
 
                 try {
                     SocketIoManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
                         if (success) {
-                            Toast.makeText(requireContext(), "Socket.IO raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
+                        //    Toast.makeText(requireContext(), "Socket.IO raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
                             errorCount = 0;
                             removerFromDatabase(listNeedtoUpload)
                         } else {
-                            Toast.makeText(requireContext(), "Socket.IO raw_logs publish Failed "+error!!.message , Toast.LENGTH_SHORT).show()
+                       //     Toast.makeText(requireContext(), "Socket.IO raw_logs publish Failed "+error!!.message , Toast.LENGTH_SHORT).show()
                             errorCount++
                             fragmentScope.launch {
-                                mDataBase?.logDao()?.insert(LogEntry(error.message!!, formatter.format(Date())))
+                                mDataBase?.logDao()?.insert(LogEntry(error?.message!!, formatter.format(Date())))
 
                             }
                             restartApp(requireContext())
@@ -499,7 +499,7 @@ class FragmentLabelInventory :
     fun removerFromDatabase(list : List<TagDataEntry>){
         fragmentScope.launch {
             for(i in list){
-                mDataBase?.tagDataDao()?.deleteData(i.epcId, i.antenna)
+                mDataBase?.tagDataDao()?.deleteData(i.rfid, i.antenna)
             }
         }
     }
@@ -509,7 +509,7 @@ class FragmentLabelInventory :
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
 
         for(i in list){
-            tagDataEntry.add(TagDataEntry(i.epcId, i.antenna, i.antenna, "", mBranchId!!))
+            tagDataEntry.add(TagDataEntry(i.rfid, i.antenna, i.antenna, "", mBranchId!!))
         }
 
         return tagDataEntry
