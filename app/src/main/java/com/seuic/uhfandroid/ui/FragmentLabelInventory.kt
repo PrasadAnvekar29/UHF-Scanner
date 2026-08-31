@@ -578,6 +578,7 @@ class FragmentLabelInventory :
             val jsonObject = JsonObject()
             jsonObject.addProperty("branch_id", mBranchId)
             jsonObject.addProperty("time", formatter.format(Date()))
+            jsonObject.addProperty("apk_version", Utility.getVersion(requireContext()))
 
             val payloadJson = jsonObject.toString()
 
