@@ -565,7 +565,7 @@ class FragmentLabelInventory :
          //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
             val jsonObject = JsonObject()
-            jsonObject.addProperty("branchCode", mBranchId)
+            jsonObject.addProperty("branch_id", mBranchId)
             jsonObject.addProperty("time", formatter.format(Date()))
 
             val payloadJson = jsonObject.toString()

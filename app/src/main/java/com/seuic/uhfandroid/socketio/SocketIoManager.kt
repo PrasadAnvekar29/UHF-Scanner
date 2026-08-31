@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.seuic.uhfandroid.R
 import com.seuic.uhfandroid.bean.ApkVersion
@@ -20,6 +21,9 @@ import com.seuic.uhfandroid.util.Utility
 import io.socket.client.IO
 import io.socket.client.Socket
 import java.net.URISyntaxException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -111,7 +115,7 @@ object SocketIoManager {
             ioSocket.on(event) { args ->
                 val payload = args.firstOrNull()?.toString().orEmpty()
                 try {
-                    handleCommandMessage(context.applicationContext, JsonParser.parseString(payload))
+                    handleCommandMessage(context.applicationContext, JsonParser.parseString(payload), branchId)
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to handle Socket.IO message on $event: $payload", e)
                 }
@@ -180,8 +184,8 @@ object SocketIoManager {
             onResult?.invoke(false, e)
         }
     }
-
-    private fun handleCommandMessage(appContext: Context, value: JsonElement) {
+    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS a", Locale.getDefault())
+    private fun handleCommandMessage(appContext: Context, value: JsonElement, branchId : String) {
         try {
             var requestType: String
             var apkVersion: String? = null
@@ -211,6 +215,16 @@ object SocketIoManager {
                 }
                 else -> Log.w(TAG, "Unknown Socket.IO command payload: $value")
             }
+
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("branch_id", branchId)
+            jsonObject.addProperty("time", formatter.format(Date()))
+            jsonObject.addProperty("reader_request_type", requestType)
+
+            val payloadJson = jsonObject.toString()
+
+            publish(appContext, "acknowledge_command", payloadJson)
+
         } catch (e: Exception) {
             Log.e(TAG, "Failed to handle Socket.IO command payload: $value", e)
         }
