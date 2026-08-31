@@ -30,7 +30,6 @@ import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.database.TagDataEntry
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.databinding.FragmentLabelInventoryBinding
-import com.seuic.uhfandroid.mqtt.MqttManager
 import com.seuic.uhfandroid.socketio.SocketIoManager
 import com.seuic.uhfandroid.ext.clearTagList
 import com.seuic.uhfandroid.ext.currentTag
@@ -297,17 +296,17 @@ class FragmentLabelInventory :
 
             if (mBranchId.isNullOrEmpty() ) {
                 (getActivity() as MainActivity).showDialog()
-            } else {
+            } /*else {
                 if (!isSearching) {
                     v.btnSearchForCard.performClick()
                 }
 
-            }
+            }*/
 
 
             startPostTask()
             startHeartBeatTask()
-            startHardwareBeatTask()
+         //   startHardwareBeatTask()
 
             if (mDataBase == null) {
                 mDataBase = UFHDatabase.getDatabase(requireContext())
@@ -321,7 +320,7 @@ class FragmentLabelInventory :
 
             detele3DaysLogsData()
          //   addToDatabase(null)
-        }, 90000)
+        }, 10000)
 
     }
 
@@ -351,7 +350,6 @@ class FragmentLabelInventory :
             var listNeedtoUpload : List<TagDataEntry>? =  mDataBase?.tagDataDao()!!.getList()
 
         //    listNeedtoUpload.addAll(vm.listTagData!!)
-            MqttManager.isConnected(requireContext())
             SocketIoManager.isConnected(requireContext())
 
 
@@ -361,20 +359,7 @@ class FragmentLabelInventory :
          //     if(listNeedtoUpload!!.isNotEmpty()){
                 val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val payloadJson = DataStoreUtils.getGson().toJson(listNeedtoUpload).toString()
-            //    val body: RequestBody = RequestBody.create(JSON, payloadJson)
 
-              /*  try {
-                    MqttManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
-                        if (success) {
-                            Toast.makeText(requireContext(), "MQTT raw_logs publish succeeded" , Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(requireContext(), "Failed "+error!!.message , Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                }catch (e: Exception){
-
-                }*/
 
                 try {
                     SocketIoManager.publish(requireContext(), "raw_logs", payloadJson) { success, error ->
@@ -555,7 +540,7 @@ class FragmentLabelInventory :
         }
     }
 
-    fun startHardwareBeatTask() {
+    /*fun startHardwareBeatTask() {
         fragmentScope.launch {
             while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
@@ -571,7 +556,7 @@ class FragmentLabelInventory :
                 delay(1800000) // 30 min
             }
         }
-    }
+    }*/
     fun callHeartBeatNetworkAPI() {
 
 
@@ -583,44 +568,26 @@ class FragmentLabelInventory :
             jsonObject.addProperty("branchCode", mBranchId)
             jsonObject.addProperty("time", formatter.format(Date()))
 
-         //   MqttManager.publish(requireContext(), "heartbeat", jsonObject.toString())
+            val payloadJson = jsonObject.toString()
 
-            val apiService: ApiInterface = ApiClient.getClient()
-                .create(ApiInterface::class.java)
-
-            val call: Call<APIResponse.Response> = apiService.postHearBeat(mBranchId, "", BuildConfig.API_KEY, jsonObject)
-
-            call.enqueue(object : Callback<APIResponse.Response?> {
-                override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
-                    try {
-                        Log.v("Prasad","3")
-
-                        if(response.body() != null  && response.body()!!.isSuccess){
-                            Toast.makeText(requireContext(),"Heart Beats "+response.body()?.message, Toast.LENGTH_SHORT).show()
+            try {
+                SocketIoManager.publish(requireContext(), "liveliness", payloadJson) { success, error ->
+                    fragmentScope.launch(Dispatchers.Main) {
+                        if (success) {
+                            Toast.makeText(requireContext(), "liveliness publish succeeded" , Toast.LENGTH_SHORT).show()
                         } else {
-                            val b = BaseApiResponse()
-                            val  msg: String = b.safeErrorResponse(response)
-                            Toast.makeText(requireContext(), "Heart Beats "+msg , Toast.LENGTH_SHORT).show()
-
+                            Toast.makeText(requireContext(), "liveliness publish Failed "+error?.message , Toast.LENGTH_SHORT).show()
                         }
-                    } catch (e: Exception) {
                     }
                 }
 
-                override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
-                    try {
-                        val b = BaseApiResponse()
-                        val  msg: String = b.safeErrorResponse(t)
-                        Toast.makeText(requireContext(), "Heart Beats "+ msg , Toast.LENGTH_SHORT).show()
+            }catch (e: Exception){
 
-                    } catch (e: Exception) {
-                    }
-                }
-            })
+            }
         }
     }
 
-    fun callHardwareNetworkAPI() {
+    /*fun callHardwareNetworkAPI() {
 
 
         fragmentScope.launch {
@@ -665,7 +632,7 @@ class FragmentLabelInventory :
                 }
             })
         }
-    }
+    }*/
 
 
     fun restartApp(context: Context){

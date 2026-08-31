@@ -50,6 +50,21 @@ object SocketIoManager {
     private var connectedServerUrl: String? = null
     private var connectedEvent: String? = null
 
+    /**
+     * Lets SocketIoService mirror the live connection state in its
+     * foreground notification. Set by the service in onCreate, cleared in
+     * onDestroy; invoked from the Socket.IO client callbacks below.
+     */
+    @Volatile
+    private var connectionListener: ((connected: Boolean) -> Unit)? = null
+
+    fun setConnectionListener(listener: ((connected: Boolean) -> Unit)?) {
+        connectionListener = listener
+        listener?.invoke(isSocketConnected())
+    }
+
+    fun isSocketConnected(): Boolean = socket?.connected() == true
+
     @Synchronized
     fun connect(context: Context) {
         if (!DataStoreUtils.getSocketIoEnabled(context)) return
@@ -83,12 +98,15 @@ object SocketIoManager {
 
             ioSocket.on(Socket.EVENT_CONNECT) {
                 Log.i(TAG, "Socket.IO connected to $serverUrl")
+                connectionListener?.invoke(true)
             }
             ioSocket.on(Socket.EVENT_DISCONNECT) {
                 Log.w(TAG, "Socket.IO connection lost, client will retry")
+                connectionListener?.invoke(false)
             }
             ioSocket.on(Socket.EVENT_CONNECT_ERROR) { args ->
                 Log.e(TAG, "Socket.IO connect error: ${args.firstOrNull()}")
+                connectionListener?.invoke(false)
             }
             ioSocket.on(event) { args ->
                 val payload = args.firstOrNull()?.toString().orEmpty()
@@ -270,6 +288,7 @@ object SocketIoManager {
             socket = null
             connectedServerUrl = null
             connectedEvent = null
+            connectionListener?.invoke(false)
         } catch (e: Exception) {
 
         }

@@ -9,7 +9,6 @@ import com.seuic.androidreader.bean.SearchParams
 import com.seuic.androidreader.bean.TagInfo
 import com.seuic.uhfandroid.database.LogEntry
 import com.seuic.uhfandroid.database.UFHDatabase
-import com.seuic.uhfandroid.mqtt.MqttService
 import com.seuic.uhfandroid.socketio.SocketIoService
 import com.seuic.uhfandroid.util.DataStoreUtils
 import java.io.File
@@ -29,9 +28,7 @@ class App : Application() {
 
         setupCrashLogger()
 
-        if (DataStoreUtils.getMqttEnabled(this)) {
-            MqttService.start(this)
-        }
+
         if (DataStoreUtils.getSocketIoEnabled(this)) {
             SocketIoService.start(this)
         }

@@ -30,10 +30,11 @@ class SocketIoService : Service() {
         try {
             super.onCreate()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+                startForeground(NOTIFICATION_ID, buildNotification(isConnected = false), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
             } else {
-                startForeground(NOTIFICATION_ID, buildNotification())
+                startForeground(NOTIFICATION_ID, buildNotification(isConnected = false))
             }
+            SocketIoManager.setConnectionListener { connected -> updateNotification(connected) }
             SocketIoManager.connect(applicationContext)
         } catch (e: Exception) {
 
@@ -49,6 +50,7 @@ class SocketIoService : Service() {
 
     override fun onDestroy() {
         try {
+            SocketIoManager.setConnectionListener(null)
             SocketIoManager.disconnect()
         } catch (e: Exception) {
 
@@ -68,7 +70,7 @@ class SocketIoService : Service() {
         start(applicationContext)
     }
 
-    private fun buildNotification(): Notification {
+    private fun buildNotification(isConnected: Boolean): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
@@ -79,13 +81,28 @@ class SocketIoService : Service() {
             manager.createNotificationChannel(channel)
         }
 
+        val statusText = if (isConnected) "Socket Connected" else "Socket Not connected"
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("VRDDHII")
-            .setContentText("Socket.IO connection running")
+            .setContentText(statusText)
             .setSmallIcon(R.drawable.vrddhii_png)
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
             .build()
+    }
+
+    /**
+     * Called on SocketIoManager's connect/disconnect callbacks so the
+     * persistent notification always reflects the live socket state
+     * instead of a static "running" label.
+     */
+    private fun updateNotification(isConnected: Boolean) {
+        try {
+            val manager = getSystemService(NotificationManager::class.java) ?: return
+            manager.notify(NOTIFICATION_ID, buildNotification(isConnected))
+        } catch (e: Exception) {
+
+        }
     }
 
     companion object {

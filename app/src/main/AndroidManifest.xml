@@ -78,10 +78,7 @@
         </receiver>
 
 
-        <service
-            android:name=".mqtt.MqttService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
+
 
         <service
             android:name=".socketio.SocketIoService"
