@@ -305,8 +305,8 @@ class FragmentLabelInventory :
 
 
             startPostTask()
-            startHeartBeatTask()
-         //   startHardwareBeatTask()
+            startLivelinessTask()
+            startErrorLogsTask()
 
             if (mDataBase == null) {
                 mDataBase = UFHDatabase.getDatabase(requireContext())
@@ -371,7 +371,7 @@ class FragmentLabelInventory :
                        //     Toast.makeText(requireContext(), "Socket.IO raw_logs publish Failed "+error!!.message , Toast.LENGTH_SHORT).show()
                             errorCount++
                             fragmentScope.launch {
-                                mDataBase?.logDao()?.insert(LogEntry(error?.message!!, formatter.format(Date())))
+                                mDataBase?.logDao()?.insert(LogEntry(error?.message!!, formatter.format(Date()), mBranchId!!))
 
                             }
                             restartApp(requireContext())
@@ -381,7 +381,7 @@ class FragmentLabelInventory :
                 }catch (e: Exception){
                     errorCount++
                     fragmentScope.launch {
-                        mDataBase?.logDao()?.insert(LogEntry(e.message!!, formatter.format(Date())))
+                        mDataBase?.logDao()?.insert(LogEntry(e.message!!, formatter.format(Date()), mBranchId!!))
 
                     }
                     restartApp(requireContext())
@@ -452,7 +452,7 @@ class FragmentLabelInventory :
 
             }
           } catch (e: Exception) {
-              mDataBase?.logDao()?.insert(LogEntry(Log.getStackTraceString(e), formatter.format(Date())))
+              mDataBase?.logDao()?.insert(LogEntry(Log.getStackTraceString(e), formatter.format(Date()), mBranchId!!))
           }
         }
 
@@ -489,6 +489,14 @@ class FragmentLabelInventory :
         }
     }
 
+    fun removeErrorFromDatabase(list : List<LogEntry>){
+        fragmentScope.launch {
+            for(i in list){
+                mDataBase?.logDao()?.deleteData(i.id)
+            }
+        }
+    }
+
 
     fun map(list : MutableList<TagBean>) : List<TagDataEntry>{
         var tagDataEntry : MutableList<TagDataEntry> = ArrayList()
@@ -521,7 +529,7 @@ class FragmentLabelInventory :
     }
 
 
-    fun startHeartBeatTask() {
+    fun startLivelinessTask() {
         fragmentScope.launch {
             while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
@@ -533,14 +541,14 @@ class FragmentLabelInventory :
                     }
                 } else {
                     // Call your API here
-                    callHeartBeatNetworkAPI()
+                    callLivelinessNetworkAPI()
                 }
                 delay(1800000) // 30 min
             }
         }
     }
 
-    /*fun startHardwareBeatTask() {
+    fun startErrorLogsTask() {
         fragmentScope.launch {
             while (isActive && isAdded) {
                 mBranchId = DataStoreUtils.getBranchId(requireActivity())
@@ -551,16 +559,19 @@ class FragmentLabelInventory :
                     }
                 } else {
                     // Call your API here
-                    callHardwareNetworkAPI()
+                    callErrorLogsNetworkAPI()
                 }
-                delay(1800000) // 30 min
+                delay(10_000) // 10 seconds
             }
         }
-    }*/
-    fun callHeartBeatNetworkAPI() {
+    }
+    fun callLivelinessNetworkAPI() {
 
 
         fragmentScope.launch {
+
+            SocketIoManager.isConnected(requireContext())
+
             val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
          //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
@@ -587,52 +598,45 @@ class FragmentLabelInventory :
         }
     }
 
-    /*fun callHardwareNetworkAPI() {
+    fun callErrorLogsNetworkAPI() {
 
+        if (mDataBase == null) {
+            mDataBase = UFHDatabase.getDatabase(requireContext())
+        }
 
         fragmentScope.launch {
-            val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
-            //   val body: RequestBody = RequestBody.create(JSON, DataStoreUtils.getGson().toJson(listNeedtoUpload).toString())
 
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("branchCode", mBranchId)
-            jsonObject.addProperty("time", formatter.format(Date()))
+            SocketIoManager.isConnected(requireContext())
 
-       //     MqttManager.publish(requireContext(), "hardware", jsonObject.toString())
+            var listNeedtoUpload : List<LogEntry>? =  mDataBase?.logDao()!!.getList()
 
-            val apiService: ApiInterface = ApiClient.getClient()
-                .create(ApiInterface::class.java)
+            SocketIoManager.isConnected(requireContext())
 
-            val call: Call<APIResponse.Response> = apiService.postHardwareBeat(mBranchId, "", BuildConfig.API_KEY)
+            if(!listNeedtoUpload.isNullOrEmpty()){
+                try {
 
-            call.enqueue(object : Callback<APIResponse.Response?> {
-                override fun onResponse(call: Call<APIResponse.Response?>, response: Response<APIResponse.Response?>) {
-                    try {
+                    val payloadJson = DataStoreUtils.getGson().toJson(listNeedtoUpload).toString()
 
-                        if(response.body() != null  && response.body()!!.isSuccess){
-                            Toast.makeText(requireContext(),"Hardware "+response.body()?.message, Toast.LENGTH_SHORT).show()
-                        } else {
-                            val b = BaseApiResponse()
-                            val  msg: String = b.safeErrorResponse(response)
-                            Toast.makeText(requireContext(), "Hardware "+msg , Toast.LENGTH_SHORT).show()
 
+                    SocketIoManager.publish(requireContext(), "error_logs", payloadJson) { success, error ->
+                        fragmentScope.launch(Dispatchers.Main) {
+                            if (success) {
+                                removeErrorFromDatabase(listNeedtoUpload)
+                                Toast.makeText(requireContext(), "error_logs publish succeeded" , Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(requireContext(), "error_logs publish Failed "+error?.message , Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    } catch (e: Exception) {
                     }
+
+                }catch (e: Exception){
+
                 }
 
-                override fun onFailure(call: Call<APIResponse.Response?>, t: Throwable) {
-                    try {
-                        val b = BaseApiResponse()
-                        val  msg: String = b.safeErrorResponse(t)
-                        Toast.makeText(requireContext(), "Hardware "+ msg , Toast.LENGTH_SHORT).show()
+            }
 
-                    } catch (e: Exception) {
-                    }
-                }
-            })
         }
-    }*/
+    }
 
 
     fun restartApp(context: Context){

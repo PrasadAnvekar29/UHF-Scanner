@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey
 class LogEntry(
     @field:ColumnInfo(name = "error") @field:SerializedName("error") var error: String,
     @field:ColumnInfo(name = "time") @field:SerializedName("time") var time: String,
+    @field:ColumnInfo(name = "branch_id") @field:SerializedName("branch_id") var branchId: String,
 ) {
     @Transient
     @PrimaryKey(autoGenerate = true)

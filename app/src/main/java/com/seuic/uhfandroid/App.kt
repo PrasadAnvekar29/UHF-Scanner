@@ -51,7 +51,7 @@ class App : Application() {
                 val logThread = Thread {
                     try {
                         UFHDatabase.getDatabase(applicationContext)
-                            ?.logDao()?.insert(LogEntry(msg, formatter.format(Date())))
+                            ?.logDao()?.insert(LogEntry(msg, formatter.format(Date()),  DataStoreUtils.getBranchId(mContext)))
                     } catch (e: Exception) {
                         Log.e("CrashLogger", "Failed to persist crash log", e)
                     }

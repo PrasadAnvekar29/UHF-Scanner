@@ -22,6 +22,8 @@ interface LogDao {
     @Query("DELETE FROM sqlite_sequence WHERE name = 'log_data_table'")
     fun truncateAll()
 
+    @Query("DELETE from log_data_table WHERE id = :id")
+    fun deleteData(id : Int)
 
   //  @Query("DELETE from log_data_table")
  //   suspend fun deleteAll()
