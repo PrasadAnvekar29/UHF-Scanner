@@ -424,7 +424,21 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
         try {
             if (!TextUtils.isEmpty(apkPath)) {
                 vm.hideLoading()
-                val toInstall = File(apkPath)
+
+
+
+                val installer = SilentApkInstaller(this)
+                val apkFile = File(apkPath)
+                val started = installer.install(apkFile)
+
+                if (started) {
+                    Log.d("APK_UPDATE", "Installation started" +started)
+                } else {
+                    Log.e("APK_UPDATE", "Could not start installation" + started)
+                }
+                vm.hideLoading()
+
+               /* val toInstall = File(apkPath)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     val apkUri = FileProvider.getUriForFile(
                         applicationContext,
@@ -436,14 +450,15 @@ class MainActivity : BaseActivity<BaseViewModel, ActivityMainBinding>() {
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 } else {
-                    val apkUri = Uri.fromFile(toInstall)
+                    val apkUri = Uri.fromFile(apkFile)
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
-                }
+                }*/
             }
         } catch (e: java.lang.Exception) {
+            Log.d("APK_UPDATE", "error  started")
             e.printStackTrace()
         }
     }

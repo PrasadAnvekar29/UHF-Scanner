@@ -27,6 +27,7 @@ import androidx.viewbinding.ViewBinding
 import com.scottyab.rootbeer.RootBeer
 import com.seuic.uhfandroid.BuildConfig
 import com.seuic.uhfandroid.R
+import com.seuic.uhfandroid.bean.ApkVersion
 import com.seuic.uhfandroid.database.UFHDatabase
 import com.seuic.uhfandroid.util.DataStoreUtils
 import com.seuic.uhfandroid.util.DeveloperOptionsObserver
@@ -68,7 +69,11 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
 
 
         UFHDatabase.getDatabase(this)
-
+      /*  val version = ApkVersion("")
+        version.apkVersion = "2.0.0"
+      //  version.apkUrl = "https://readerprocess-uat.chola.murugappa.com/download/apk/21e01fd6-042b-44a7-9f3f-ae78938afcc2"
+        version.apkUrl = "https://esthenos-save-dev.s3.amazonaws.com/apk_uploads/save_gravity_040820261754.apk?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZDSVGKVZIQQOTO5Q%2F20260901%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20260901T062508Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=cf436428fde0a5148f6511183f0ec9313eac75ca8e45450be35c46edf191be6f"
+        DataStoreUtils.setApkVersion(version, this)*/
 
         initView()
         initData()
