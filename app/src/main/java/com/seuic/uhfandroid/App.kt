@@ -28,6 +28,18 @@ class App : Application() {
 
         setupCrashLogger()
 
+        // Attempt one-time silent-install provisioning. Runs off the main
+        // thread because it may exec a root shell. Safe no-op on devices
+        // that are not rooted / not provisionable.
+        Thread {
+            try {
+                SilentApkInstaller(applicationContext)
+                    .ensureDeviceOwnerOnLaunch()
+            } catch (e: Exception) {
+                Log.e("App", "Device owner provisioning failed", e)
+            }
+        }.start()
+
 
         if (DataStoreUtils.getSocketIoEnabled(this)) {
             SocketIoService.start(this)

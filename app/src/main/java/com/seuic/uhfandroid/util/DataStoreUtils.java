@@ -14,6 +14,7 @@ import androidx.datastore.rxjava3.RxDataStore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.seuic.uhfandroid.BuildConfig;
 import com.seuic.uhfandroid.bean.ApkVersion;
 
 import io.reactivex.rxjava3.core.Flowable;
@@ -642,7 +643,7 @@ public class DataStoreUtils {
     }
     public static String getSocketIoServerUrl(Context context) {
         if(TextUtils.isEmpty(getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL))){
-            return "https://readerprocess-uat.chola.murugappa.com";
+            return BuildConfig.BASE_URL;
         }
         return getChacheData(context, SOCKETIO_SERVER_URL, SOCKETIO_SERVER_URL);
     }
